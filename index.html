@@ -240,11 +240,18 @@
       margin-bottom: 24px;
     }
 
+    .popup-objekt-id {
+      margin-top: 12px;
+      font-size: 13px;
+      color: #6d6d6d;
+      word-break: break-all;
+    }
+
     .popup-buttons {
       display: flex;
       flex-wrap: wrap;
       gap: 14px;
-      margin-top: 8px;
+      margin-top: 18px;
     }
 
     .popup-btn {
@@ -276,6 +283,16 @@
 
     .popup-btn-secondary:hover {
       background: #e3eee9;
+    }
+
+    .popup-btn-outline {
+      background: #ffffff;
+      color: #0f4b3a;
+      border: 2px solid #0f4b3a;
+    }
+
+    .popup-btn-outline:hover {
+      background: #f3f8f5;
     }
 
     @media (max-width: 768px) {
@@ -353,6 +370,7 @@
   <script>
     const projectId = "lya1es34";
     const dataset = "production";
+    const anfrageEmail = "info@deisterblick-immobilien.de";
 
     let objekteListe = [];
     let aktuellerIndex = 0;
@@ -385,6 +403,12 @@
       return "Verfügbar";
     }
 
+    function anfrageLinkFuerObjekt(obj) {
+      const betreff = `Anfrage zu Objekt: ${obj.titel || "Immobilie"} | ID: ${obj._id || ""}`;
+      const text = `Guten Tag,%0D%0A%0D%0Aich interessiere mich für folgendes Objekt:%0D%0A%0D%0ATitel: ${obj.titel || ""}%0D%0AOrt: ${obj.ort || ""}%0D%0APreis: ${obj.preis || ""}%0D%0AStatus: ${statusText(obj.status)}%0D%0AObjekt-ID: ${obj._id || ""}%0D%0A%0D%0ABitte kontaktieren Sie mich.%0D%0A%0D%0AVielen Dank.`;
+      return `mailto:${anfrageEmail}?subject=${betreff}&body=${text}`;
+    }
+
     function zeigePopup(index) {
       aktuellerIndex = index;
       const obj = objekteListe[index];
@@ -400,6 +424,8 @@
       if (obj.expose && obj.expose.asset && obj.expose.asset._ref) {
         exposeUrl = exposeUrlAusRef(obj.expose.asset._ref);
       }
+
+      const anfrageLink = anfrageLinkFuerObjekt(obj);
 
       popupInner.innerHTML = `
         <div class="popup-header">
@@ -437,22 +463,27 @@
 
           <div class="popup-status-row">
             <span class="status-badge ${statusKlasse(obj.status)}">${statusText(obj.status)}</span>
+            <div class="popup-objekt-id">Objekt-ID: ${obj._id || ""}</div>
           </div>
 
-          ${
-            exposeUrl
-              ? `
-              <div class="popup-buttons">
-                <a class="popup-btn popup-btn-primary" href="${exposeUrl}" target="_blank" rel="noopener noreferrer">
+          <div class="popup-buttons">
+            <a class="popup-btn popup-btn-primary" href="${anfrageLink}">
+              Anfrage senden
+            </a>
+
+            ${
+              exposeUrl
+                ? `
+                <a class="popup-btn popup-btn-secondary" href="${exposeUrl}" target="_blank" rel="noopener noreferrer">
                   Exposé ansehen
                 </a>
-                <a class="popup-btn popup-btn-secondary" href="${exposeUrl}" download>
+                <a class="popup-btn popup-btn-outline" href="${exposeUrl}" download>
                   Exposé herunterladen
                 </a>
-              </div>
-            `
-              : ""
-          }
+              `
+                : ""
+            }
+          </div>
         </div>
       `;
 
