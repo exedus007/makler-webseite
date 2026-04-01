@@ -6,10 +6,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: Arial, sans-serif;
       margin: 0;
       background: #f5f5f5;
+      color: #222;
     }
 
     header {
@@ -109,7 +114,7 @@
     .popup-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.7);
+      background: rgba(0, 0, 0, 0.75);
       display: none;
       align-items: center;
       justify-content: center;
@@ -123,13 +128,71 @@
 
     .popup-box {
       position: relative;
-      background: #fff;
+      background: #ffffff;
       width: 100%;
-      max-width: 950px;
+      max-width: 980px;
       max-height: 90vh;
       overflow-y: auto;
-      border-radius: 18px;
-      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
+      border-radius: 22px;
+      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.35);
+      display: flex;
+      align-items: stretch;
+    }
+
+    .popup-image-wrap {
+      width: 42%;
+      min-height: 100%;
+      background: #e8e8e8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .popup-image {
+      width: 100%;
+      height: 100%;
+      max-height: 520px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .popup-content {
+      width: 58%;
+      padding: 36px 34px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .popup-content h2 {
+      margin: 0 0 18px;
+      color: #0f4b3a;
+      font-size: 34px;
+      line-height: 1.2;
+    }
+
+    .popup-meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 18px;
+      margin-bottom: 20px;
+    }
+
+    .popup-meta p {
+      margin: 0;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    .popup-beschreibung {
+      margin-top: 8px;
+      font-size: 16px;
+      line-height: 1.7;
+      color: #333;
+    }
+
+    .popup-status-row {
+      margin-top: 22px;
     }
 
     .popup-close {
@@ -140,51 +203,27 @@
       height: 42px;
       border: none;
       border-radius: 50%;
-      background: rgba(0, 0, 0, 0.7);
+      background: rgba(0, 0, 0, 0.72);
       color: #fff;
       font-size: 22px;
       cursor: pointer;
-      z-index: 2;
-    }
-
-    .popup-image {
-      width: 100%;
-      height: 420px;
-      object-fit: cover;
-      display: block;
-      background: #ddd;
-    }
-
-    .popup-content {
-      padding: 28px;
-    }
-
-    .popup-content h2 {
-      margin-top: 0;
-      margin-bottom: 14px;
-      color: #0f4b3a;
-      font-size: 32px;
-    }
-
-    .popup-content p {
-      margin: 10px 0;
-      font-size: 17px;
-      line-height: 1.5;
+      z-index: 5;
     }
 
     .popup-nav {
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
-      width: 52px;
-      height: 52px;
+      width: 48px;
+      height: 48px;
       border: none;
       border-radius: 50%;
-      background: rgba(15, 75, 58, 0.9);
+      background: rgba(15, 75, 58, 0.92);
       color: #fff;
-      font-size: 28px;
+      font-size: 24px;
       cursor: pointer;
-      z-index: 2;
+      z-index: 5;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.22);
     }
 
     .popup-prev {
@@ -197,26 +236,80 @@
 
     .popup-nav:hover,
     .popup-close:hover {
-      opacity: 0.9;
+      opacity: 0.92;
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 900px) {
       h1 {
-        font-size: 36px;
+        font-size: 38px;
+      }
+
+      .popup-box {
+        flex-direction: column;
+        max-width: 680px;
+      }
+
+      .popup-image-wrap,
+      .popup-content {
+        width: 100%;
       }
 
       .popup-image {
-        height: 240px;
+        height: 260px;
+        max-height: 260px;
+      }
+
+      .popup-content {
+        padding: 24px;
       }
 
       .popup-content h2 {
-        font-size: 26px;
+        font-size: 28px;
+      }
+
+      .popup-meta {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 600px) {
+      header {
+        padding: 24px 16px;
+      }
+
+      h1 {
+        font-size: 32px;
+      }
+
+      .container {
+        padding: 14px;
+      }
+
+      .popup-overlay {
+        padding: 10px;
+      }
+
+      .popup-image {
+        height: 220px;
+        max-height: 220px;
+      }
+
+      .popup-content h2 {
+        font-size: 24px;
       }
 
       .popup-nav {
-        width: 44px;
-        height: 44px;
-        font-size: 24px;
+        width: 42px;
+        height: 42px;
+        font-size: 22px;
+      }
+
+      .popup-prev {
+        left: 10px;
+      }
+
+      .popup-next {
+        right: 10px;
       }
     }
   </style>
@@ -240,7 +333,6 @@
       <button class="popup-close" id="popupClose">&times;</button>
       <button class="popup-nav popup-prev" id="popupPrev">&#10094;</button>
       <button class="popup-nav popup-next" id="popupNext">&#10095;</button>
-
       <div id="popupInner"></div>
     </div>
   </div>
@@ -284,15 +376,26 @@
       }
 
       popupInner.innerHTML = `
-        ${bildUrl ? `<img class="popup-image" src="${bildUrl}" alt="${obj.titel || ""}">` : ""}
+        <div class="popup-image-wrap">
+          ${bildUrl ? `<img class="popup-image" src="${bildUrl}" alt="${obj.titel || ""}">` : ""}
+        </div>
         <div class="popup-content">
           <h2>${obj.titel || ""}</h2>
-          <p><strong>Ort:</strong> ${obj.ort || ""}</p>
-          <p><strong>Preis:</strong> ${obj.preis || ""}</p>
-          <p><strong>Wohnfläche:</strong> ${obj.wohnflaeche || ""}</p>
-          <p><strong>Zimmer:</strong> ${obj.zimmer || ""}</p>
-          <p><strong>Beschreibung:</strong> ${obj.beschreibung || ""}</p>
-          <span class="status-badge ${statusKlasse(obj.status)}">${statusText(obj.status)}</span>
+
+          <div class="popup-meta">
+            <p><strong>Ort:</strong> ${obj.ort || ""}</p>
+            <p><strong>Preis:</strong> ${obj.preis || ""}</p>
+            <p><strong>Wohnfläche:</strong> ${obj.wohnflaeche || ""}</p>
+            <p><strong>Zimmer:</strong> ${obj.zimmer || ""}</p>
+          </div>
+
+          <div class="popup-beschreibung">
+            ${obj.beschreibung || ""}
+          </div>
+
+          <div class="popup-status-row">
+            <span class="status-badge ${statusKlasse(obj.status)}">${statusText(obj.status)}</span>
+          </div>
         </div>
       `;
 
@@ -327,7 +430,6 @@
 
         if (!container) return;
 
-        // Nur verkauft ausblenden
         objekteListe = (data.result || []).filter(obj => obj.status !== "verkauft");
 
         if (objekteListe.length === 0) {
