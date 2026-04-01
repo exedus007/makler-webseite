@@ -2,86 +2,303 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <title>Deisterblick Immobilien</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deisterblick Immobilien</title>
+  <meta name="description" content="Deisterblick Immobilien – persönliche Immobilienvermittlung mit aktuellen Objekten, Beratung und Anfrageformular.">
 
   <style>
     * {
       box-sizing: border-box;
     }
 
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
+      margin: 0;
       font-family: Arial, sans-serif;
-      margin: 0;
-      background: #f5f5f5;
-      color: #222;
+      background: #f6f6f4;
+      color: #1f1f1f;
+      line-height: 1.5;
     }
 
-    header {
-      background: #0f4b3a;
-      color: white;
-      padding: 30px 20px;
-      text-align: center;
+    a {
+      color: inherit;
+      text-decoration: none;
     }
 
-    h1 {
-      margin: 0 0 10px;
-      font-size: 48px;
-    }
-
-    header p {
-      margin: 0;
-      font-size: 18px;
+    img {
+      max-width: 100%;
+      display: block;
     }
 
     .container {
-      max-width: 1200px;
-      margin: 40px auto;
-      padding: 20px;
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
     }
 
+    /* Header */
+    .topbar {
+      background: #0f4b3a;
+      color: #fff;
+      font-size: 14px;
+    }
+
+    .topbar-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding: 10px 0;
+      flex-wrap: wrap;
+    }
+
+    .topbar a:hover {
+      text-decoration: underline;
+    }
+
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(255,255,255,0.96);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid #e6e6e2;
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 16px 0;
+    }
+
+    .brand {
+      font-size: 24px;
+      font-weight: 700;
+      color: #0f4b3a;
+      letter-spacing: 0.3px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      font-weight: 600;
+      color: #27312d;
+    }
+
+    .nav-links a:hover {
+      color: #0f4b3a;
+    }
+
+    /* Hero */
+    .hero {
+      background:
+        linear-gradient(rgba(15,75,58,0.62), rgba(15,75,58,0.68)),
+        url("assets/logo.jpg") center/cover no-repeat;
+      color: #fff;
+      min-height: 72vh;
+      display: flex;
+      align-items: center;
+    }
+
+    .hero-content {
+      max-width: 760px;
+      padding: 80px 0;
+    }
+
+    .hero-kicker {
+      display: inline-block;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.16);
+      font-size: 14px;
+      margin-bottom: 18px;
+    }
+
+    .hero h1 {
+      font-size: clamp(38px, 6vw, 68px);
+      line-height: 1.06;
+      margin: 0 0 18px;
+    }
+
+    .hero p {
+      font-size: 19px;
+      margin: 0 0 28px;
+      color: rgba(255,255,255,0.92);
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 22px;
+      border-radius: 12px;
+      font-weight: 700;
+      transition: 0.2s ease;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: #ffffff;
+      color: #0f4b3a;
+    }
+
+    .btn-primary:hover {
+      background: #f0f4f2;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.5);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.08);
+    }
+
+    /* Sections */
+    section {
+      padding: 82px 0;
+    }
+
+    .section-head {
+      margin-bottom: 30px;
+    }
+
+    .section-kicker {
+      color: #0f4b3a;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+
+    .section-title {
+      font-size: clamp(28px, 4vw, 44px);
+      margin: 0 0 12px;
+      color: #111;
+    }
+
+    .section-text {
+      margin: 0;
+      color: #5d645f;
+      max-width: 760px;
+      font-size: 17px;
+    }
+
+    /* About */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.15fr;
+      gap: 36px;
+      align-items: center;
+    }
+
+    .about-card {
+      background: #fff;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 12px 28px rgba(0,0,0,0.06);
+    }
+
+    .about-image {
+      min-height: 420px;
+      background: #ddd url("assets/mein_bild.jpg") center/cover no-repeat;
+    }
+
+    .about-content {
+      background: #fff;
+      border-radius: 24px;
+      padding: 34px;
+      box-shadow: 0 12px 28px rgba(0,0,0,0.06);
+    }
+
+    .about-content h3 {
+      margin-top: 0;
+      font-size: 28px;
+      color: #0f4b3a;
+    }
+
+    .facts {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .fact {
+      background: #f4f7f5;
+      border-radius: 16px;
+      padding: 18px;
+    }
+
+    .fact strong {
+      display: block;
+      font-size: 24px;
+      color: #0f4b3a;
+      margin-bottom: 6px;
+    }
+
+    .fact span {
+      color: #5d645f;
+      font-size: 14px;
+    }
+
+    /* Objects */
     .objekte-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
       gap: 24px;
     }
 
     .objekt-card {
       background: #fff;
-      border-radius: 16px;
+      border-radius: 20px;
       overflow: hidden;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.07);
       cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
     .objekt-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 14px 28px rgba(0, 0, 0, 0.12);
+      transform: translateY(-5px);
+      box-shadow: 0 18px 36px rgba(0,0,0,0.12);
     }
 
     .objekt-bild {
       width: 100%;
-      height: 220px;
+      height: 240px;
       object-fit: cover;
-      display: block;
       background: #ddd;
     }
 
     .objekt-inhalt {
-      padding: 20px;
+      padding: 22px;
     }
 
     .objekt-card h3 {
-      margin: 0 0 14px;
+      margin: 0 0 12px;
       color: #0f4b3a;
-      font-size: 22px;
+      font-size: 24px;
     }
 
     .objekt-card p {
       margin: 8px 0;
-      font-size: 16px;
-      color: #222;
+      color: #2e342f;
+      font-size: 15px;
     }
 
     .status-badge {
@@ -89,12 +306,12 @@
       margin-top: 14px;
       padding: 8px 14px;
       border-radius: 999px;
-      font-size: 14px;
-      font-weight: bold;
+      font-size: 13px;
+      font-weight: 700;
     }
 
     .status-verfuegbar {
-      background: #eef4f1;
+      background: #e7f2ed;
       color: #0f4b3a;
     }
 
@@ -105,12 +322,106 @@
 
     .leer-text {
       text-align: center;
+      color: #666;
       font-size: 18px;
-      color: #555;
-      padding: 40px 0;
+      padding: 42px 0;
     }
 
-    /* POPUP */
+    /* Services */
+    .service-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .service-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.06);
+    }
+
+    .service-card h3 {
+      margin-top: 0;
+      color: #0f4b3a;
+      font-size: 22px;
+    }
+
+    .service-card p {
+      color: #5d645f;
+      margin-bottom: 0;
+    }
+
+    /* FAQ */
+    .faq-list {
+      display: grid;
+      gap: 16px;
+    }
+
+    .faq-item {
+      background: #fff;
+      border-radius: 18px;
+      padding: 22px 24px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+    }
+
+    .faq-item h3 {
+      margin: 0 0 10px;
+      color: #0f4b3a;
+      font-size: 20px;
+    }
+
+    .faq-item p {
+      margin: 0;
+      color: #5d645f;
+    }
+
+    /* Contact */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+    }
+
+    .contact-card {
+      background: #fff;
+      border-radius: 22px;
+      padding: 28px;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.06);
+    }
+
+    .contact-card h3 {
+      margin-top: 0;
+      color: #0f4b3a;
+      font-size: 24px;
+    }
+
+    .contact-card p {
+      margin: 10px 0;
+      color: #4d544f;
+    }
+
+    .contact-card a:hover {
+      text-decoration: underline;
+    }
+
+    /* Footer */
+    footer {
+      background: #0f4b3a;
+      color: #fff;
+      padding: 26px 0;
+      margin-top: 30px;
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+      font-size: 14px;
+    }
+
+    /* Popup */
     .popup-overlay {
       position: fixed;
       inset: 0;
@@ -129,10 +440,10 @@
     .popup-box {
       position: relative;
       width: 100%;
-      max-width: 860px;
-      max-height: 90vh;
+      max-width: 960px;
+      max-height: 92vh;
       overflow-y: auto;
-      background: #ffffff;
+      background: #fff;
       border-radius: 24px;
       box-shadow: 0 30px 70px rgba(0, 0, 0, 0.35);
     }
@@ -145,7 +456,7 @@
       height: 42px;
       border: none;
       border-radius: 50%;
-      background: rgba(0, 0, 0, 0.7);
+      background: rgba(0,0,0,0.7);
       color: #fff;
       font-size: 22px;
       cursor: pointer;
@@ -165,7 +476,7 @@
       font-size: 28px;
       cursor: pointer;
       z-index: 10;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
     }
 
     .popup-prev {
@@ -178,7 +489,7 @@
 
     .popup-header {
       width: 100%;
-      height: 440px;
+      height: 420px;
       background: #e8e8e8;
       overflow: hidden;
       border-top-left-radius: 24px;
@@ -237,7 +548,7 @@
 
     .popup-status-row {
       margin-top: 24px;
-      margin-bottom: 24px;
+      margin-bottom: 18px;
     }
 
     .popup-objekt-id {
@@ -252,6 +563,7 @@
       flex-wrap: wrap;
       gap: 14px;
       margin-top: 18px;
+      margin-bottom: 24px;
     }
 
     .popup-btn {
@@ -261,9 +573,11 @@
       padding: 14px 20px;
       border-radius: 12px;
       text-decoration: none;
-      font-weight: bold;
+      font-weight: 700;
       font-size: 15px;
       transition: 0.2s ease;
+      border: none;
+      cursor: pointer;
     }
 
     .popup-btn-primary {
@@ -286,7 +600,7 @@
     }
 
     .popup-btn-outline {
-      background: #ffffff;
+      background: #fff;
       color: #0f4b3a;
       border: 2px solid #0f4b3a;
     }
@@ -295,9 +609,113 @@
       background: #f3f8f5;
     }
 
+    .popup-form {
+      margin-top: 8px;
+      padding: 24px;
+      border-radius: 18px;
+      background: #f8fbf9;
+      border: 1px solid #e2ece7;
+    }
+
+    .popup-form h3 {
+      margin: 0 0 16px;
+      color: #0f4b3a;
+      font-size: 24px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group.full {
+      grid-column: 1 / -1;
+    }
+
+    .form-group label {
+      margin-bottom: 8px;
+      font-weight: 700;
+      color: #0f4b3a;
+      font-size: 14px;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      border: 1px solid #ccd9d2;
+      border-radius: 12px;
+      padding: 14px;
+      font-size: 15px;
+      font-family: Arial, sans-serif;
+      background: #fff;
+    }
+
+    .form-group textarea {
+      min-height: 130px;
+      resize: vertical;
+    }
+
+    .form-note {
+      margin-top: 14px;
+      font-size: 13px;
+      color: #666;
+      line-height: 1.5;
+    }
+
+    .popup-form button[type="submit"] {
+      margin-top: 18px;
+      width: 100%;
+    }
+
+    /* Scroll top */
+    .scroll-top {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 1001;
+      background: #0f4b3a;
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      padding: 12px 16px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 10px 22px rgba(0,0,0,0.18);
+      display: none;
+    }
+
+    .scroll-top.show {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    @media (max-width: 900px) {
+      .about-grid,
+      .contact-grid,
+      .service-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .facts {
+        grid-template-columns: 1fr;
+      }
+    }
+
     @media (max-width: 768px) {
       h1 {
         font-size: 36px;
+      }
+
+      .nav-inner {
+        flex-direction: column;
+        align-items: flex-start;
       }
 
       .popup-box {
@@ -331,7 +749,8 @@
         font-size: 28px;
       }
 
-      .popup-details {
+      .popup-details,
+      .form-grid {
         grid-template-columns: 1fr;
       }
 
@@ -347,16 +766,212 @@
 </head>
 <body>
 
-  <header>
-    <h1>Deisterblick Immobilien</h1>
-    <p>Aktuelle Objekte</p>
-  </header>
-
-  <div class="container">
-    <div id="objekte-container">
-      <p class="leer-text">Lade Objekte...</p>
+  <div class="topbar">
+    <div class="container topbar-inner">
+      <div>Deisterblick Immobilien</div>
+      <div>
+        <a href="mailto:info@Deisterblick-Immobilien.de">info@Deisterblick-Immobilien.de</a>
+      </div>
     </div>
   </div>
+
+  <nav class="navbar">
+    <div class="container nav-inner">
+      <a href="#top" class="brand">Deisterblick Immobilien</a>
+      <div class="nav-links">
+        <a href="#ueber-mich">Über mich</a>
+        <a href="#objekte">Aktuelle Objekte</a>
+        <a href="#leistungen">Leistungen</a>
+        <a href="#faq">FAQ</a>
+        <a href="#kontakt">Kontakt</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero" id="top">
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-kicker">Persönlich. Verlässlich. Regional.</div>
+        <h1>Ihr Immobilienpartner mit Blick für Werte.</h1>
+        <p>
+          Ich begleite Eigentümer, Käufer und Interessenten mit persönlicher Betreuung,
+          klarem Prozess und einer modernen Vermarktung.
+        </p>
+        <div class="hero-actions">
+          <a href="#objekte" class="btn btn-primary">Aktuelle Objekte ansehen</a>
+          <a href="#kontakt" class="btn btn-secondary">Kontakt aufnehmen</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="ueber-mich">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-kicker">Über mich</div>
+        <h2 class="section-title">Persönliche Immobilienvermittlung mit Vertrauen</h2>
+        <p class="section-text">
+          Ich begleite Sie von der ersten Anfrage bis zum erfolgreichen Abschluss –
+          transparent, engagiert und mit Blick auf Ihre individuellen Ziele.
+        </p>
+      </div>
+
+      <div class="about-grid">
+        <div class="about-card">
+          <div class="about-image"></div>
+        </div>
+
+        <div class="about-content">
+          <h3>Ihr Ansprechpartner rund um Ihre Immobilie</h3>
+          <p>
+            Ob Verkauf, Kauf oder erste Orientierung: Ich unterstütze Sie mit einer klaren
+            Strategie, einer professionellen Präsentation Ihrer Immobilie und einer direkten,
+            ehrlichen Kommunikation.
+          </p>
+          <p>
+            Mein Anspruch ist nicht nur eine schöne Vermarktung, sondern eine Begleitung,
+            die für Eigentümer und Interessenten nachvollziehbar, effizient und persönlich bleibt.
+          </p>
+
+          <div class="facts">
+            <div class="fact">
+              <strong>Persönlich</strong>
+              <span>Direkter Kontakt ohne Umwege</span>
+            </div>
+            <div class="fact">
+              <strong>Modern</strong>
+              <span>Digitale Vermarktung & Exposé</span>
+            </div>
+            <div class="fact">
+              <strong>Verlässlich</strong>
+              <span>Klare Struktur & ehrliche Beratung</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="objekte">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-kicker">Aktuelle Objekte</div>
+        <h2 class="section-title">Entdecken Sie meine aktuellen Immobilienangebote</h2>
+        <p class="section-text">
+          Klicken Sie auf ein Objekt, um Details, Exposé und Anfrageformular im Popup zu sehen.
+        </p>
+      </div>
+
+      <div id="objekte-container">
+        <p class="leer-text">Lade Objekte...</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="leistungen">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-kicker">Leistungen</div>
+        <h2 class="section-title">Wie ich Sie unterstütze</h2>
+        <p class="section-text">
+          Vom ersten Gespräch bis zur erfolgreichen Vermittlung begleite ich Sie mit einem klaren und persönlichen Ansatz.
+        </p>
+      </div>
+
+      <div class="service-grid">
+        <div class="service-card">
+          <h3>Verkauf</h3>
+          <p>
+            Professionelle Präsentation, digitale Vermarktung, Besichtigungsmanagement und strukturierte Käuferkommunikation.
+          </p>
+        </div>
+        <div class="service-card">
+          <h3>Kaufbegleitung</h3>
+          <p>
+            Persönliche Unterstützung bei der Auswahl passender Objekte, Besichtigungen und der weiteren Abstimmung.
+          </p>
+        </div>
+        <div class="service-card">
+          <h3>Ersteinschätzung</h3>
+          <p>
+            Einschätzung Ihrer Immobilie und Einordnung der Vermarktungsmöglichkeiten als Grundlage für weitere Schritte.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-kicker">FAQ</div>
+        <h2 class="section-title">Häufige Fragen</h2>
+      </div>
+
+      <div class="faq-list">
+        <div class="faq-item">
+          <h3>Wie läuft eine Anfrage ab?</h3>
+          <p>
+            Sie senden Ihre Anfrage direkt über das Objekt-Popup. Die Objekt-ID wird automatisch mitgeschickt, damit Ihre Anfrage direkt korrekt zugeordnet ist.
+          </p>
+        </div>
+        <div class="faq-item">
+          <h3>Kann ich das Exposé online ansehen?</h3>
+          <p>
+            Ja. Wenn für ein Objekt ein Exposé hinterlegt ist, können Sie es direkt im Popup öffnen oder herunterladen.
+          </p>
+        </div>
+        <div class="faq-item">
+          <h3>Werden reservierte Objekte weiterhin angezeigt?</h3>
+          <p>
+            Ja. Reservierte Objekte bleiben sichtbar und sind klar gekennzeichnet. Nur verkaufte Objekte werden automatisch ausgeblendet.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="kontakt">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-kicker">Kontakt</div>
+        <h2 class="section-title">Lassen Sie uns sprechen</h2>
+        <p class="section-text">
+          Für Fragen, Besichtigungen oder eine erste Einschätzung Ihrer Immobilie bin ich gerne für Sie da.
+        </p>
+      </div>
+
+      <div class="contact-grid">
+        <div class="contact-card">
+          <h3>Kontaktinformationen</h3>
+          <p><strong>E-Mail:</strong> <a href="mailto:info@Deisterblick-Immobilien.de">info@Deisterblick-Immobilien.de</a></p>
+          <p><strong>Erreichbarkeit:</strong> Nach Vereinbarung</p>
+          <p><strong>Hinweis:</strong> Objektanfragen können direkt über das jeweilige Objekt gesendet werden.</p>
+        </div>
+
+        <div class="contact-card">
+          <h3>Hinweis zur Anfrage</h3>
+          <p>
+            Im Objekt-Popup finden Sie ein direktes Anfrageformular. Dabei werden Titel, Status und Objekt-ID automatisch mitgesendet.
+          </p>
+          <p>
+            So können Anfragen ohne manuelle Nachsuche sofort dem richtigen Objekt zugeordnet werden.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container footer-inner">
+      <div>© Deisterblick Immobilien</div>
+      <div>
+        <a href="mailto:info@Deisterblick-Immobilien.de">info@Deisterblick-Immobilien.de</a>
+      </div>
+    </div>
+  </footer>
+
+  <button id="scrollTopBtn" class="scroll-top">↑ Nach oben</button>
 
   <div id="popupOverlay" class="popup-overlay">
     <div class="popup-box">
@@ -370,7 +985,9 @@
   <script>
     const projectId = "lya1es34";
     const dataset = "production";
-    const anfrageEmail = "info@deisterblick-immobilien.de";
+
+    // HIER DEINEN FORMSPREE ENDPOINT EINTRAGEN
+    const formspreeEndpoint = "https://formspree.io/f/DEIN_FORM_ID";
 
     let objekteListe = [];
     let aktuellerIndex = 0;
@@ -403,12 +1020,6 @@
       return "Verfügbar";
     }
 
-    function anfrageLinkFuerObjekt(obj) {
-      const betreff = `Anfrage zu Objekt: ${obj.titel || "Immobilie"} | ID: ${obj._id || ""}`;
-      const text = `Guten Tag,%0D%0A%0D%0Aich interessiere mich für folgendes Objekt:%0D%0A%0D%0ATitel: ${obj.titel || ""}%0D%0AOrt: ${obj.ort || ""}%0D%0APreis: ${obj.preis || ""}%0D%0AStatus: ${statusText(obj.status)}%0D%0AObjekt-ID: ${obj._id || ""}%0D%0A%0D%0ABitte kontaktieren Sie mich.%0D%0A%0D%0AVielen Dank.`;
-      return `mailto:${anfrageEmail}?subject=${betreff}&body=${text}`;
-    }
-
     function zeigePopup(index) {
       aktuellerIndex = index;
       const obj = objekteListe[index];
@@ -424,8 +1035,6 @@
       if (obj.expose && obj.expose.asset && obj.expose.asset._ref) {
         exposeUrl = exposeUrlAusRef(obj.expose.asset._ref);
       }
-
-      const anfrageLink = anfrageLinkFuerObjekt(obj);
 
       popupInner.innerHTML = `
         <div class="popup-header">
@@ -467,10 +1076,6 @@
           </div>
 
           <div class="popup-buttons">
-            <a class="popup-btn popup-btn-primary" href="${anfrageLink}">
-              Anfrage senden
-            </a>
-
             ${
               exposeUrl
                 ? `
@@ -484,6 +1089,62 @@
                 : ""
             }
           </div>
+
+          <form class="popup-form" action="${formspreeEndpoint}" method="POST">
+            <h3>Anfrage senden</h3>
+
+            <input type="hidden" name="objekt_id" value="${obj._id || ""}">
+            <input type="hidden" name="objekt_titel" value="${obj.titel || ""}">
+            <input type="hidden" name="objekt_ort" value="${obj.ort || ""}">
+            <input type="hidden" name="objekt_preis" value="${obj.preis || ""}">
+            <input type="hidden" name="objekt_status" value="${statusText(obj.status)}">
+            <input type="hidden" name="_subject" value="Neue Objektanfrage: ${obj.titel || ""} | ID: ${obj._id || ""}">
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="name-${index}">Name</label>
+                <input id="name-${index}" type="text" name="name" required>
+              </div>
+
+              <div class="form-group">
+                <label for="email-${index}">E-Mail</label>
+                <input id="email-${index}" type="email" name="email" required>
+              </div>
+
+              <div class="form-group">
+                <label for="telefon-${index}">Telefon</label>
+                <input id="telefon-${index}" type="text" name="telefon">
+              </div>
+
+              <div class="form-group">
+                <label for="betreff-${index}">Betreff</label>
+                <input id="betreff-${index}" type="text" name="betreff" value="Anfrage zu ${obj.titel || ""}">
+              </div>
+
+              <div class="form-group full">
+                <label for="nachricht-${index}">Nachricht</label>
+                <textarea id="nachricht-${index}" name="message" required>Guten Tag,
+
+ich interessiere mich für folgendes Objekt:
+
+Titel: ${obj.titel || ""}
+Ort: ${obj.ort || ""}
+Preis: ${obj.preis || ""}
+Status: ${statusText(obj.status)}
+Objekt-ID: ${obj._id || ""}
+
+Bitte kontaktieren Sie mich.
+
+Vielen Dank.</textarea>
+              </div>
+            </div>
+
+            <div class="form-note">
+              Die Objekt-ID und die wichtigsten Objektdaten werden automatisch mitgesendet, damit die Anfrage sofort eindeutig zugeordnet werden kann.
+            </div>
+
+            <button type="submit" class="popup-btn popup-btn-primary">Anfrage direkt senden</button>
+          </form>
         </div>
       `;
 
@@ -581,6 +1242,20 @@
       if (e.key === "Escape") popupSchliessen();
       if (e.key === "ArrowRight") naechstesObjekt();
       if (e.key === "ArrowLeft") vorherigesObjekt();
+    });
+
+    const scrollTopBtn = document.getElementById("scrollTopBtn");
+
+    window.addEventListener("scroll", () => {
+      if (window.scrollY > 400) {
+        scrollTopBtn.classList.add("show");
+      } else {
+        scrollTopBtn.classList.remove("show");
+      }
+    });
+
+    scrollTopBtn.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
     });
 
     ladeObjekte();
