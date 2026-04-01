@@ -1,59 +1,181 @@
-<script>
-async function ladeObjekte() {
-  const projectId = "lya1es34";
-  const dataset = "production";
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Deisterblick Immobilien</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  const query = encodeURIComponent('*[_type=="immobilie"]');
-  const url = `https://${projectId}.api.sanity.io/v2023-01-01/data/query/${dataset}?query=${query}`;
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f5f5f5;
+    }
 
-  try {
-    const res = await fetch(url);
-    const data = await res.json();
+    header {
+      background: #0f4b3a;
+      color: white;
+      padding: 30px 20px;
+      text-align: center;
+    }
 
-    const container = document.getElementById("objekte-container");
-    container.innerHTML = '<div class="objekte-grid"></div>';
-    const grid = container.querySelector(".objekte-grid");
+    h1 {
+      margin: 0 0 10px;
+      font-size: 48px;
+    }
 
-    data.result
-      .filter(obj => obj.status !== "verkauft")
-      .forEach(obj => {
-        const div = document.createElement("div");
-        div.classList.add("objekt-card");
+    header p {
+      margin: 0;
+      font-size: 18px;
+    }
 
-        let bildUrl = "";
-        if (obj.bild && obj.bild.asset && obj.bild.asset._ref) {
-          const ref = obj.bild.asset._ref;
-          const parts = ref.split("-");
-          const id = parts[1];
-          const dimensions = parts[2];
-          const format = parts[3];
-          bildUrl = `https://cdn.sanity.io/images/${projectId}/${dataset}/${id}-${dimensions}.${format}`;
+    .container {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+
+    .objekte-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+    }
+
+    .objekt-card {
+      background: #fff;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+      transition: transform 0.2s ease;
+    }
+
+    .objekt-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .objekt-bild {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      display: block;
+      background: #ddd;
+    }
+
+    .objekt-inhalt {
+      padding: 20px;
+    }
+
+    .objekt-card h3 {
+      margin: 0 0 14px;
+      color: #0f4b3a;
+      font-size: 22px;
+    }
+
+    .objekt-card p {
+      margin: 8px 0;
+      font-size: 16px;
+      color: #222;
+    }
+
+    .status-badge {
+      display: inline-block;
+      margin-top: 14px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: bold;
+      background: #eef4f1;
+      color: #0f4b3a;
+    }
+
+    .leer-text {
+      text-align: center;
+      font-size: 18px;
+      color: #555;
+      padding: 40px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Deisterblick Immobilien</h1>
+    <p>Aktuelle Objekte</p>
+  </header>
+
+  <div class="container">
+    <div id="objekte-container">
+      <p class="leer-text">Lade Objekte...</p>
+    </div>
+  </div>
+
+  <script>
+    async function ladeObjekte() {
+      const projectId = "lya1es34";
+      const dataset = "production";
+
+      const query = encodeURIComponent('*[_type=="immobilie"]');
+      const url = `https://${projectId}.api.sanity.io/v2023-01-01/data/query/${dataset}?query=${query}`;
+
+      const container = document.getElementById("objekte-container");
+
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (!container) return;
+
+        const verfuegbareObjekte = (data.result || []).filter(
+          obj => obj.status !== "verkauft"
+        );
+
+        if (verfuegbareObjekte.length === 0) {
+          container.innerHTML = '<p class="leer-text">Keine verfügbaren Objekte vorhanden.</p>';
+          return;
         }
 
-        div.innerHTML = `
-          ${bildUrl ? `<img class="objekt-bild" src="${bildUrl}" alt="${obj.titel}">` : ""}
-          <div class="objekt-inhalt">
-            <h3>${obj.titel || ""}</h3>
-            <p><strong>Ort:</strong> ${obj.ort || ""}</p>
-            <p><strong>Preis:</strong> ${obj.preis || ""}</p>
-            <p><strong>Wohnfläche:</strong> ${obj.wohnflaeche || ""}</p>
-            <p><strong>Zimmer:</strong> ${obj.zimmer || ""}</p>
-            <p>${obj.beschreibung || ""}</p>
-            <span class="status-badge">${obj.status || ""}</span>
-          </div>
-        `;
+        container.innerHTML = '<div class="objekte-grid"></div>';
+        const grid = container.querySelector(".objekte-grid");
 
-        grid.appendChild(div);
-      });
+        verfuegbareObjekte.forEach(obj => {
+          const div = document.createElement("div");
+          div.classList.add("objekt-card");
 
-    if (!data.result || data.result.filter(obj => obj.status !== "verkauft").length === 0) {
-      container.innerHTML = "<p>Keine verfügbaren Objekte vorhanden.</p>";
+          let bildUrl = "";
+          if (obj.bild && obj.bild.asset && obj.bild.asset._ref) {
+            const ref = obj.bild.asset._ref;
+            const parts = ref.split("-");
+            const id = parts[1];
+            const dimensions = parts[2];
+            const format = parts[3];
+            bildUrl = `https://cdn.sanity.io/images/${projectId}/${dataset}/${id}-${dimensions}.${format}`;
+          }
+
+          div.innerHTML = `
+            ${bildUrl ? `<img class="objekt-bild" src="${bildUrl}" alt="${obj.titel || ''}">` : ""}
+            <div class="objekt-inhalt">
+              <h3>${obj.titel || ""}</h3>
+              <p><strong>Ort:</strong> ${obj.ort || ""}</p>
+              <p><strong>Preis:</strong> ${obj.preis || ""}</p>
+              <p><strong>Wohnfläche:</strong> ${obj.wohnflaeche || ""}</p>
+              <p><strong>Zimmer:</strong> ${obj.zimmer || ""}</p>
+              <p>${obj.beschreibung || ""}</p>
+              <span class="status-badge">${obj.status || ""}</span>
+            </div>
+          `;
+
+          grid.appendChild(div);
+        });
+      } catch (error) {
+        console.error("Fehler:", error);
+        if (container) {
+          container.innerHTML = '<p class="leer-text">Fehler beim Laden</p>';
+        }
+      }
     }
-  } catch (error) {
-    console.error("Fehler:", error);
-    document.getElementById("objekte-container").innerHTML = "Fehler beim Laden";
-  }
-}
 
-ladeObjekte();
-</script>
+    ladeObjekte();
+  </script>
+
+</body>
+</html>
