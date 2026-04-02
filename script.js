@@ -74,7 +74,7 @@ const revealObserver = new IntersectionObserver((entries) => {
 
 revealElements.forEach(el => revealObserver.observe(el));
 
-/* Scroll Top */
+/* Scroll top */
 const scrollTopBtn = document.getElementById("scroll-top-btn");
 window.addEventListener("scroll", () => {
   if (window.scrollY > 500) {
