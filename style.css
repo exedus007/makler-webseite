@@ -75,9 +75,11 @@ a {
 }
 
 .logo img {
-  height: 98px;
-  width: auto;
+  height: 120px;        /* größer */
+  width: auto;          /* Proportion bleibt korrekt */
+  max-width: 260px;     /* etwas länger */
   object-fit: contain;
+;
 }
 
 .nav-links {
