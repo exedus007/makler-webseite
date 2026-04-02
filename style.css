@@ -75,9 +75,9 @@ a {
 }
 
 .logo img {
-  height: 120px;        /* größer */
+  height: 220px;        /* größer */
   width: auto;          /* Proportion bleibt korrekt */
-  max-width: 260px;     /* etwas länger */
+  max-width: 360px;     /* etwas länger */
   object-fit: contain;
 ;
 }
