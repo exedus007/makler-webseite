@@ -408,6 +408,10 @@ a {
   align-items: start;
 }
 
+.about-only-grid {
+  grid-template-columns: 0.9fr 1.1fr;
+}
+
 .profile-card,
 .objects-card {
   background: #fff;
@@ -601,6 +605,11 @@ a {
   align-items: flex-start;
   font-size: 14px;
   color: #5d645f;
+}
+
+.checkbox-wrap input {
+  margin-top: 4px;
+  flex: 0 0 auto;
 }
 
 .submit-btn {
@@ -948,7 +957,8 @@ a {
   .hero-grid,
   .split-grid,
   .about-objects-grid,
-  .contact-grid {
+  .contact-grid,
+  .about-only-grid {
     grid-template-columns: 1fr;
   }
 }
