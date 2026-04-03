@@ -1,1090 +1,376 @@
-```html
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Makler Webseite</title>
-  <meta name="description" content="Ihr zuverlässiger Immobilienmakler für Verkauf, Vermietung und Bewertung." />
-  <style>
-    :root {
-      --primary: #1f3b5b;
-      --primary-dark: #162c44;
-      --accent: #c9a96e;
-      --bg: #f7f7f5;
-      --white: #ffffff;
-      --text: #1f2933;
-      --muted: #6b7280;
-      --border: #e5e7eb;
-      --shadow: 0 10px 30px rgba(0,0,0,0.08);
-      --radius: 18px;
-      --radius-sm: 12px;
-      --container: 1180px;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
-    }
-
-    img {
-      max-width: 100%;
-      display: block;
-    }
-
-    a {
-      text-decoration: none;
-      color: inherit;
-    }
-
-    .container {
-      width: min(100% - 32px, var(--container));
-      margin: 0 auto;
-    }
-
-    .section {
-      padding: 80px 0;
-    }
-
-    .section-title {
-      font-size: 34px;
-      line-height: 1.2;
-      margin-bottom: 14px;
-      color: var(--primary);
-    }
-
-    .section-subtitle {
-      max-width: 700px;
-      color: var(--muted);
-      margin-bottom: 34px;
-      font-size: 17px;
-    }
-
-    /* HEADER */
-    .topbar {
-      background: var(--primary);
-      color: var(--white);
-      padding: 10px 0;
-      font-size: 14px;
-    }
-
-    .topbar-inner {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-
-    .topbar a {
-      color: var(--white);
-      opacity: 0.95;
-    }
-
-    .topbar a:hover {
-      opacity: 1;
-      text-decoration: underline;
-    }
-
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      background: rgba(255,255,255,0.95);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(0,0,0,0.06);
-    }
-
-    .nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      min-height: 78px;
-      gap: 20px;
-    }
-
-    .logo {
-      font-size: 24px;
-      font-weight: 700;
-      color: var(--primary);
-      letter-spacing: 0.3px;
-    }
-
-    .logo span {
-      color: var(--accent);
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 24px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-
-    .nav-links a {
-      color: var(--text);
-      font-weight: 600;
-      transition: 0.2s ease;
-    }
-
-    .nav-links a:hover {
-      color: var(--primary);
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 14px 22px;
-      border-radius: 999px;
-      border: none;
-      cursor: pointer;
-      font-weight: 700;
-      transition: 0.2s ease;
-    }
-
-    .btn-primary {
-      background: var(--primary);
-      color: var(--white);
-      box-shadow: var(--shadow);
-    }
-
-    .btn-primary:hover {
-      background: var(--primary-dark);
-      transform: translateY(-1px);
-    }
-
-    .btn-secondary {
-      background: transparent;
-      color: var(--primary);
-      border: 1px solid rgba(31,59,91,0.18);
-    }
-
-    .btn-secondary:hover {
-      background: rgba(31,59,91,0.05);
-    }
-
-    /* HERO */
-    .hero {
-      padding: 90px 0 80px;
-      background:
-        linear-gradient(rgba(20, 33, 51, 0.58), rgba(20, 33, 51, 0.58)),
-        url("https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1600&q=80") center/cover no-repeat;
-      color: var(--white);
-    }
-
-    .hero-grid {
-      display: grid;
-      grid-template-columns: 1.2fr 0.8fr;
-      gap: 32px;
-      align-items: center;
-    }
-
-    .hero h1 {
-      font-size: clamp(38px, 5vw, 64px);
-      line-height: 1.05;
-      margin-bottom: 18px;
-      max-width: 760px;
-    }
-
-    .hero p {
-      font-size: 18px;
-      max-width: 650px;
-      margin-bottom: 28px;
-      color: rgba(255,255,255,0.92);
-    }
-
-    .hero-actions {
-      display: flex;
-      gap: 14px;
-      flex-wrap: wrap;
-    }
-
-    .hero-card {
-      background: rgba(255,255,255,0.12);
-      border: 1px solid rgba(255,255,255,0.15);
-      border-radius: var(--radius);
-      padding: 28px;
-      backdrop-filter: blur(8px);
-      box-shadow: var(--shadow);
-    }
-
-    .hero-card h3 {
-      margin-bottom: 12px;
-      font-size: 22px;
-    }
-
-    .hero-card p {
-      margin: 0 0 18px;
-      font-size: 15px;
-    }
-
-    .hero-list {
-      list-style: none;
-      display: grid;
-      gap: 12px;
-    }
-
-    .hero-list li {
-      padding-left: 22px;
-      position: relative;
-      color: rgba(255,255,255,0.95);
-    }
-
-    .hero-list li::before {
-      content: "•";
-      position: absolute;
-      left: 0;
-      top: 0;
-      color: var(--accent);
-      font-size: 20px;
-      line-height: 1;
-    }
-
-    /* ABOUT / LEISTUNGEN */
-    .cards-3 {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 22px;
-    }
-
-    .card {
-      background: var(--white);
-      border-radius: var(--radius);
-      padding: 28px;
-      box-shadow: var(--shadow);
-      border: 1px solid rgba(0,0,0,0.04);
-    }
-
-    .card h3 {
-      color: var(--primary);
-      margin-bottom: 12px;
-      font-size: 22px;
-    }
-
-    .card p {
-      color: var(--muted);
-      font-size: 15px;
-    }
-
-    /* TEAM + OBJEKTE */
-    .split-section {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 28px;
-      align-items: start;
-    }
-
-    .team-box,
-    .objects-box {
-      background: var(--white);
-      border-radius: var(--radius);
-      padding: 30px;
-      box-shadow: var(--shadow);
-    }
-
-    .team-member {
-      display: flex;
-      gap: 18px;
-      align-items: center;
-      margin-top: 20px;
-    }
-
-    .team-member img {
-      width: 110px;
-      height: 110px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 4px solid rgba(201,169,110,0.25);
-    }
-
-    .team-member h3 {
-      margin-bottom: 6px;
-      color: var(--primary);
-    }
-
-    .team-member p {
-      color: var(--muted);
-    }
-
-    .objects-grid {
-      display: grid;
-      gap: 16px;
-      margin-top: 20px;
-    }
-
-    .object-card {
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      overflow: hidden;
-      background: #fff;
-      cursor: pointer;
-      transition: 0.25s ease;
-    }
-
-    .object-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 14px 28px rgba(0,0,0,0.08);
-    }
-
-    .object-card img {
-      width: 100%;
-      height: 210px;
-      object-fit: cover;
-    }
-
-    .object-content {
-      padding: 18px;
-    }
-
-    .object-content h3 {
-      color: var(--primary);
-      margin-bottom: 8px;
-      font-size: 21px;
-    }
-
-    .object-meta {
-      display: flex;
-      gap: 14px;
-      flex-wrap: wrap;
-      color: var(--muted);
-      font-size: 14px;
-      margin-bottom: 10px;
-    }
-
-    .object-price {
-      color: var(--accent);
-      font-weight: 700;
-      font-size: 20px;
-    }
-
-    /* FAQ */
-    .faq-list {
-      display: grid;
-      gap: 16px;
-    }
-
-    .faq-item {
-      background: var(--white);
-      border-radius: var(--radius-sm);
-      box-shadow: var(--shadow);
-      overflow: hidden;
-    }
-
-    .faq-question {
-      width: 100%;
-      text-align: left;
-      border: none;
-      background: var(--white);
-      padding: 22px 24px;
-      font-size: 17px;
-      font-weight: 700;
-      color: var(--primary);
-      cursor: pointer;
-    }
-
-    .faq-answer {
-      padding: 0 24px 22px;
-      color: var(--muted);
-      display: none;
-    }
-
-    .faq-item.active .faq-answer {
-      display: block;
-    }
-
-    /* KONTAKT */
-    .contact-wrap {
-      display: grid;
-      grid-template-columns: 0.95fr 1.05fr;
-      gap: 28px;
-    }
-
-    .contact-info,
-    .contact-form-box {
-      background: var(--white);
-      border-radius: var(--radius);
-      padding: 30px;
-      box-shadow: var(--shadow);
-    }
-
-    .contact-info h3,
-    .contact-form-box h3 {
-      color: var(--primary);
-      margin-bottom: 16px;
-      font-size: 24px;
-    }
-
-    .contact-info p {
-      color: var(--muted);
-      margin-bottom: 14px;
-    }
-
-    .contact-list {
-      list-style: none;
-      display: grid;
-      gap: 12px;
-      margin-top: 20px;
-    }
-
-    .contact-list li a {
-      color: var(--primary);
-      font-weight: 600;
-    }
-
-    .contact-list li a:hover {
-      text-decoration: underline;
-    }
-
-    .form-group {
-      margin-bottom: 16px;
-    }
-
-    .form-group input,
-    .form-group textarea {
-      width: 100%;
-      padding: 14px 16px;
-      border: 1px solid #d7dbe0;
-      border-radius: 12px;
-      outline: none;
-      font-size: 15px;
-      transition: 0.2s ease;
-      background: #fff;
-    }
-
-    .form-group input:focus,
-    .form-group textarea:focus {
-      border-color: rgba(31,59,91,0.4);
-      box-shadow: 0 0 0 4px rgba(31,59,91,0.08);
-    }
-
-    .form-group textarea {
-      min-height: 150px;
-      resize: vertical;
-    }
-
-    .datenschutz {
-      margin: 10px 0 22px;
-    }
-
-    .checkbox-container {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      font-size: 14px;
-      line-height: 1.5;
-      color: var(--muted);
-      cursor: pointer;
-    }
-
-    .checkbox-container input[type="checkbox"] {
-      margin-top: 3px;
-      width: 18px;
-      height: 18px;
-      flex: 0 0 18px;
-      cursor: pointer;
-    }
-
-    .checkbox-container a {
-      color: var(--primary);
-      font-weight: 600;
-    }
-
-    .checkbox-container a:hover {
-      text-decoration: underline;
-    }
-
-    /* FOOTER */
-    footer {
-      background: var(--primary);
-      color: rgba(255,255,255,0.92);
-      padding: 28px 0;
-      margin-top: 40px;
-    }
-
-    .footer-inner {
-      display: flex;
-      justify-content: space-between;
-      gap: 16px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-
-    .footer-links {
-      display: flex;
-      gap: 18px;
-      flex-wrap: wrap;
-    }
-
-    .footer-links a:hover {
-      text-decoration: underline;
-    }
-
-    /* POPUP */
-    .modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.6);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      z-index: 2000;
-    }
-
-    .modal.active {
-      display: flex;
-    }
-
-    .modal-content {
-      width: min(920px, 100%);
-      max-height: 90vh;
-      overflow-y: auto;
-      background: var(--white);
-      border-radius: 24px;
-      box-shadow: 0 25px 60px rgba(0,0,0,0.25);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .modal-close {
-      position: absolute;
-      top: 16px;
-      right: 16px;
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      border: none;
-      background: rgba(0,0,0,0.7);
-      color: #fff;
-      font-size: 22px;
-      cursor: pointer;
-      z-index: 2;
-    }
-
-    .modal-image {
-      width: 100%;
-      height: 360px;
-      object-fit: cover;
-    }
-
-    .modal-body {
-      padding: 28px;
-    }
-
-    .modal-body h3 {
-      color: var(--primary);
-      font-size: 30px;
-      margin-bottom: 10px;
-    }
-
-    .modal-meta {
-      display: flex;
-      gap: 18px;
-      flex-wrap: wrap;
-      color: var(--muted);
-      margin-bottom: 12px;
-      font-size: 15px;
-    }
-
-    .modal-price {
-      font-size: 24px;
-      color: var(--accent);
-      font-weight: 700;
-      margin-bottom: 18px;
-    }
-
-    .modal-description {
-      color: var(--muted);
-    }
-
-    /* BACK TO TOP */
-    .back-to-top {
-      position: fixed;
-      right: 20px;
-      bottom: 20px;
-      z-index: 1500;
-      display: none;
-      align-items: center;
-      gap: 8px;
-      border: none;
-      background: var(--primary);
-      color: white;
-      padding: 14px 18px;
-      border-radius: 999px;
-      cursor: pointer;
-      box-shadow: var(--shadow);
-      font-weight: 700;
-    }
-
-    .back-to-top.show {
-      display: inline-flex;
-    }
-
-    .back-to-top:hover {
-      background: var(--primary-dark);
-    }
-
-    /* RESPONSIVE */
-    @media (max-width: 1024px) {
-      .hero-grid,
-      .split-section,
-      .contact-wrap,
-      .cards-3 {
-        grid-template-columns: 1fr;
-      }
-
-      .nav {
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 16px 0;
-      }
-
-      .nav-links {
-        gap: 16px;
-      }
-
-      .hero {
-        padding-top: 70px;
-      }
-    }
-
-    @media (max-width: 700px) {
-      .section {
-        padding: 64px 0;
-      }
-
-      .section-title {
-        font-size: 28px;
-      }
-
-      .hero h1 {
-        font-size: 36px;
-      }
-
-      .hero p {
-        font-size: 16px;
-      }
-
-      .hero-card,
-      .team-box,
-      .objects-box,
-      .contact-info,
-      .contact-form-box,
-      .card {
-        padding: 22px;
-      }
-
-      .modal-image {
-        height: 240px;
-      }
-
-      .modal-body h3 {
-        font-size: 24px;
-      }
-
-      .back-to-top span:last-child {
-        display: none;
-      }
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deisterblick Immobilien</title>
+  <meta name="description" content="Deisterblick Immobilien – Verwaltung, Makler und Finanzierung. Persönliche Beratung rund um Verkauf, Bewertung und Vermarktung von Immobilien am Deister und Umgebung.">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
   <div class="topbar">
     <div class="container topbar-inner">
-      <div>Ihr zuverlässiger Partner für Immobilien</div>
-      <div>
-        <a href="mailto:info@maklerwebseite.de">info@maklerwebseite.de</a>
-      </div>
+      <span>📞 0177 - 2929512</span>
+      <a href="mailto:info@deisterblick-immobilien.de" class="topbar-link">✉️ info@deisterblick-immobilien.de</a>
     </div>
   </div>
 
-  <header>
-    <div class="container nav">
-      <a href="#start" class="logo">Makler<span>Webseite</span></a>
-      <nav class="nav-links">
-        <a href="#start">Start</a>
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="#home" class="logo">
+        <img src="assets/logo.jpg" alt="Deisterblick Immobilien Logo">
+      </a>
+
+      <button class="menu-toggle" id="menu-toggle" aria-label="Menü öffnen" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <div class="nav-links" id="nav-links">
+        <a href="#home">Start</a>
+        <a href="#verkaufen">Verkaufen</a>
+        <a href="#bewertung">Bewertung</a>
         <a href="#leistungen">Leistungen</a>
-        <a href="#team-objekte">Objekte</a>
+        <a href="#uebermich">Über mich</a>
+        <a href="#meine-objekte">Meine Objekte</a>
         <a href="#faq">FAQ</a>
         <a href="#kontakt">Kontakt</a>
-      </nav>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero" id="home">
+    <div class="hero-overlay"></div>
+
+    <div class="container hero-grid">
+      <div class="hero-left reveal">
+        <p class="eyebrow">Verwaltung · Makler · Finanzierung</p>
+        <h1>Ihr Immobilienpartner am Deister und Umgebung</h1>
+        <p class="hero-text">
+          Deisterblick Immobilien steht für persönliche Beratung, regionale Marktkenntnis
+          und eine vertrauensvolle Begleitung rund um Verkauf, Vermietung und Immobilienservice.
+          Professionell, transparent und zuverlässig – vom ersten Gespräch bis zum erfolgreichen Abschluss.
+        </p>
+
+        <div class="hero-tags">
+          <span>Immobilien Makler</span>
+          <span>Immobilienbewertung</span>
+          <span>Immobilien Finanzierung</span>
+          <span>Immobilien Verwaltung</span>
+          <span>Modernisierung und Sanierung</span>
+          <span>Persönliche Betreuung</span>
+        </div>
+
+        <div class="hero-buttons">
+          <a href="#kontakt" class="btn">Jetzt Beratung anfragen</a>
+          <a href="#bewertung" class="btn btn-light">Immobilie bewerten</a>
+        </div>
+      </div>
+
+      <div class="hero-right reveal reveal-delay">
+        <div class="hero-image-card">
+          <img src="assets/makler.jpg" alt="Deisterblick Immobilien">
+        </div>
+      </div>
     </div>
   </header>
 
-  <main>
-    <section class="hero" id="start">
-      <div class="container hero-grid">
-        <div>
-          <h1>Immobilien mit Vertrauen, Klarheit und persönlicher Beratung</h1>
+  <section class="section" id="verkaufen">
+    <div class="container">
+      <div class="section-head reveal">
+        <p class="eyebrow">Immobilie verkaufen</p>
+        <h2>So verkaufen wir Ihre Immobilie erfolgreich</h2>
+        <p class="section-text">
+          Mit klarer Strategie, professioneller Vermarktung und persönlicher Begleitung
+          schaffen wir einen sicheren und strukturierten Verkaufsprozess.
+        </p>
+      </div>
+
+      <div class="steps-grid">
+        <div class="step-card reveal">
+          <div class="step-number">1</div>
+          <h3>Bewertung</h3>
+          <p>Ermittlung eines realistischen Marktwerts als Grundlage für einen erfolgreichen Verkauf.</p>
+        </div>
+
+        <div class="step-card reveal">
+          <div class="step-number">2</div>
+          <h3>Vermarktung</h3>
+          <p>Hochwertige Präsentation und gezielte Platzierung Ihrer Immobilie am Markt.</p>
+        </div>
+
+        <div class="step-card reveal">
+          <div class="step-number">3</div>
+          <h3>Besichtigungen</h3>
+          <p>Koordination der Termine, Vorauswahl der Interessenten und professionelle Begleitung.</p>
+        </div>
+
+        <div class="step-card reveal">
+          <div class="step-number">4</div>
+          <h3>Abschluss</h3>
+          <p>Unterstützung bei Verhandlungen, Unterlagen und Begleitung bis zum Notartermin.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-dark" id="bewertung">
+    <div class="container split-grid">
+      <div class="reveal">
+        <p class="eyebrow eyebrow-light">Online-Bewertung</p>
+        <h2>Starten Sie mit einer fundierten Wertermittlung</h2>
+        <p class="section-text section-text-light">
+          Eine realistische Bewertung ist der erste wichtige Schritt beim Verkauf.
+          So schaffen Sie Klarheit und eine starke Grundlage für die Vermarktung.
+        </p>
+
+        <ul class="check-list">
+          <li>Kostenlos und unverbindlich</li>
+          <li>Basierend auf Marktkenntnis und Erfahrung</li>
+          <li>Ideal als erster Schritt für Eigentümer</li>
+        </ul>
+
+        <a href="#kontakt" class="btn">Bewertung anfragen</a>
+      </div>
+
+      <div class="info-box dark-box reveal reveal-delay">
+        <h3>Warum eine Bewertung wichtig ist</h3>
+        <p>
+          Ein zu hoher Preis schreckt Interessenten ab, ein zu niedriger Preis verschenkt Potenzial.
+          Eine professionelle Einschätzung schafft Sicherheit und verbessert die Vermarktungschancen.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="leistungen">
+    <div class="container">
+      <div class="section-head reveal">
+        <p class="eyebrow">Unsere Leistungen</p>
+        <h2>Alles aus einer Hand</h2>
+        <p class="section-text">
+          Transparent, zuverlässig und mit Blick auf Ihre Ziele.
+        </p>
+      </div>
+
+      <div class="cards-grid">
+        <div class="card reveal">
+          <h3>Immobilienbewertung</h3>
+          <p>Fundierte Einschätzung des Marktwerts Ihrer Immobilie.</p>
+        </div>
+
+        <div class="card reveal">
+          <h3>Professionelle Vermarktung</h3>
+          <p>Hochwertige Präsentation und gezielte Ansprache passender Käufer.</p>
+        </div>
+
+        <div class="card reveal">
+          <h3>Besichtigungen</h3>
+          <p>Organisation und Durchführung mit qualifizierten Interessenten.</p>
+        </div>
+
+        <div class="card reveal">
+          <h3>Verhandlungen</h3>
+          <p>Verhandlung in Ihrem Interesse bis zum erfolgreichen Abschluss.</p>
+        </div>
+
+        <div class="card reveal">
+          <h3>Unterlagen & Ablauf</h3>
+          <p>Unterstützung bei Dokumenten, Abstimmung und allen wichtigen Schritten.</p>
+        </div>
+
+        <div class="card reveal">
+          <h3>Persönliche Begleitung</h3>
+          <p>Direkter Ansprechpartner vom ersten Gespräch bis zum Notartermin.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-soft" id="uebermich">
+    <div class="container">
+      <div class="section-head reveal">
+        <p class="eyebrow">Über mich</p>
+        <h2>Persönlich für Sie da</h2>
+      </div>
+
+      <div class="about-objects-grid about-only-grid">
+        <div class="profile-card reveal">
+          <img src="assets/mein_bild.jpg" alt="Onur Askin">
+          <div class="profile-content">
+            <h3>Onur Askin</h3>
+            <p class="role">Immobilienberater</p>
+            <p>
+              Ich begleite Sie persönlich beim Verkauf Ihrer Immobilie –
+              von der ersten Beratung bis zum erfolgreichen Abschluss.
+              Vertrauen, Erreichbarkeit und eine ehrliche Beratung stehen für mich an erster Stelle.
+            </p>
+          </div>
+        </div>
+
+        <div class="info-box reveal reveal-delay">
+          <h3>Worauf ich Wert lege</h3>
           <p>
-            Ob Verkauf, Vermietung oder professionelle Bewertung – wir begleiten Sie
-            kompetent, ehrlich und mit einem klaren Blick für Ihre Ziele.
+            Mir ist wichtig, dass Sie nicht irgendeinen Ansprechpartner haben,
+            sondern jemanden, der erreichbar ist, ehrlich berät und den gesamten Ablauf im Blick behält.
           </p>
-          <div class="hero-actions">
-            <a href="#kontakt" class="btn btn-primary">Jetzt Kontakt aufnehmen</a>
-            <a href="#team-objekte" class="btn btn-secondary">Aktuelle Objekte ansehen</a>
-          </div>
-        </div>
-
-        <div class="hero-card">
-          <h3>Warum mit uns?</h3>
-          <ul class="hero-list">
-            <li>Persönliche Beratung statt Massenabfertigung</li>
-            <li>Realistische Marktpreise und transparente Einschätzung</li>
-            <li>Professionelle Vermarktung Ihrer Immobilie</li>
-            <li>Begleitung vom Erstgespräch bis zum Abschluss</li>
-          </ul>
+          <p>
+            Genau deshalb begleite ich den Verkaufsprozess persönlich und halte die Kommunikation klar und direkt.
+          </p>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="section" id="leistungen">
-      <div class="container">
-        <h2 class="section-title">Unsere Leistungen</h2>
-        <p class="section-subtitle">
-          Wir unterstützen Eigentümer, Käufer und Interessenten mit Erfahrung,
-          Marktkenntnis und einer strukturierten Vermarktung.
+  <section class="section" id="meine-objekte">
+    <div class="container">
+      <div class="section-head reveal">
+        <p class="eyebrow">Meine Objekte</p>
+        <h2>Aktuelle Immobilienangebote</h2>
+        <p class="section-text">
+          Hier finden Sie meine aktuellen Objekte. Klicken Sie auf ein Objekt,
+          um Bilder, Details, Exposé und Anfrageformular zu öffnen.
+        </p>
+      </div>
+
+      <div class="objects-card reveal">
+        <div id="objekte-container" class="objects-dynamic-list">
+          <p class="objects-empty">Objekte werden geladen...</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="faq">
+    <div class="container faq-container">
+      <div class="section-head reveal">
+        <p class="eyebrow">FAQ</p>
+        <h2>Häufige Fragen</h2>
+      </div>
+
+      <div class="faq-item reveal">
+        <button class="faq-question" type="button" aria-expanded="false">
+          <span>Ist die Immobilienbewertung kostenlos?</span>
+          <span class="faq-icon">⌄</span>
+        </button>
+        <div class="faq-answer">
+          <p>Ja. Die erste Einschätzung ist kostenlos und unverbindlich.</p>
+        </div>
+      </div>
+
+      <div class="faq-item reveal">
+        <button class="faq-question" type="button" aria-expanded="false">
+          <span>Wie lange dauert ein Immobilienverkauf?</span>
+          <span class="faq-icon">⌄</span>
+        </button>
+        <div class="faq-answer">
+          <p>Das hängt von Lage, Preis, Zustand und Nachfrage ab. Viele Verkäufe dauern einige Wochen bis mehrere Monate.</p>
+        </div>
+      </div>
+
+      <div class="faq-item reveal">
+        <button class="faq-question" type="button" aria-expanded="false">
+          <span>Begleiten Sie auch beim Notartermin?</span>
+          <span class="faq-icon">⌄</span>
+        </button>
+        <div class="faq-answer">
+          <p>Ja. Die Begleitung erfolgt vom Erstgespräch bis zum Notartermin.</p>
+        </div>
+      </div>
+
+      <div class="faq-item reveal">
+        <button class="faq-question" type="button" aria-expanded="false">
+          <span>Warum sollte ich mit einem Makler verkaufen?</span>
+          <span class="faq-icon">⌄</span>
+        </button>
+        <div class="faq-answer">
+          <p>Ein Makler spart Zeit, kennt den Markt, übernimmt die Vermarktung und führt Verhandlungen professionell.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-soft" id="kontakt">
+    <div class="container contact-grid">
+      <div class="contact-info reveal">
+        <p class="eyebrow">Kontakt</p>
+        <h2>Wir beraten Sie persönlich</h2>
+        <p class="section-text">
+          Senden Sie uns eine Nachricht oder rufen Sie direkt an.
+          Wir melden uns schnellstmöglich zurück.
         </p>
 
-        <div class="cards-3">
-          <div class="card">
-            <h3>Verkauf</h3>
-            <p>
-              Vom Exposé bis zum Notartermin kümmern wir uns um einen professionellen
-              und sicheren Verkaufsprozess.
-            </p>
-          </div>
-          <div class="card">
-            <h3>Vermietung</h3>
-            <p>
-              Wir finden passende Mieter, übernehmen die Vermarktung und sorgen für
-              einen reibungslosen Ablauf.
-            </p>
-          </div>
-          <div class="card">
-            <h3>Bewertung</h3>
-            <p>
-              Mit fundierter Marktkenntnis ermitteln wir einen realistischen Wert
-              Ihrer Immobilie als solide Entscheidungsgrundlage.
-            </p>
-          </div>
+        <div class="info-box">
+          <p><strong>Telefon:</strong> 0177 - 2929512</p>
+          <p><strong>E-Mail:</strong> info@deisterblick-immobilien.de</p>
+          <p><strong>Adresse:</strong> Siedlunghöhenluft 36, 30890 Barsinghausen</p>
         </div>
       </div>
-    </section>
 
-    <section class="section" id="team-objekte">
-      <div class="container">
-        <h2 class="section-title">Team & Aktuelle Objekte</h2>
-        <p class="section-subtitle">
-          Lernen Sie uns kennen und entdecken Sie ausgewählte Immobilienangebote.
-        </p>
+      <div class="form-box reveal reveal-delay">
+        <form class="contact-form" id="contact-form">
+          <input type="text" name="name" placeholder="Ihr Name" required>
+          <input type="email" name="email" placeholder="Ihre E-Mail" required>
+          <input type="tel" name="phone" placeholder="Ihre Telefonnummer">
+          <textarea name="message" rows="6" placeholder="Ihre Nachricht" required></textarea>
 
-        <div class="split-section">
-          <div class="team-box">
-            <h2 style="color: var(--primary);">Ihr Ansprechpartner</h2>
-            <div class="team-member">
-              <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80" alt="Ansprechpartner" />
-              <div>
-                <h3>Max Mustermann</h3>
-                <p>Immobilienmakler & Beratung</p>
-                <p style="margin-top: 10px;">
-                  Persönlich, erreichbar und mit Fokus auf eine seriöse und nachhaltige Vermittlung.
-                </p>
-              </div>
-            </div>
-          </div>
+          <label class="checkbox-wrap">
+            <input type="checkbox" name="privacy" required>
+            <span>
+              Ich habe die Datenschutzhinweise gelesen und bin damit einverstanden, dass meine Angaben zur Bearbeitung meiner Anfrage gespeichert und verarbeitet werden.
+            </span>
+          </label>
 
-          <div class="objects-box">
-            <h2 style="color: var(--primary);">Aktuelle Objekte</h2>
-            <div class="objects-grid">
-
-              <article
-                class="object-card"
-                data-title="Moderne Eigentumswohnung"
-                data-location="München"
-                data-size="84 m²"
-                data-rooms="3 Zimmer"
-                data-price="549.000 €"
-                data-image="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1200&q=80"
-                data-description="Diese moderne Eigentumswohnung überzeugt durch eine durchdachte Raumaufteilung, helle Wohnbereiche und eine hochwertige Ausstattung. Ideal für Paare, kleine Familien oder Kapitalanleger in attraktiver Lage."
-              >
-                <img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1200&q=80" alt="Eigentumswohnung" />
-                <div class="object-content">
-                  <h3>Moderne Eigentumswohnung</h3>
-                  <div class="object-meta">
-                    <span>München</span>
-                    <span>84 m²</span>
-                    <span>3 Zimmer</span>
-                  </div>
-                  <div class="object-price">549.000 €</div>
-                </div>
-              </article>
-
-              <article
-                class="object-card"
-                data-title="Familienhaus mit Garten"
-                data-location="Augsburg"
-                data-size="156 m²"
-                data-rooms="5 Zimmer"
-                data-price="789.000 €"
-                data-image="https://images.unsplash.com/photo-1576941089067-2de3c901e126?auto=format&fit=crop&w=1200&q=80"
-                data-description="Großzügiges Einfamilienhaus mit schönem Garten, Terrasse und viel Platz für die ganze Familie. Ruhige Wohnlage, gute Anbindung und ein gepflegtes Gesamtbild machen dieses Objekt besonders attraktiv."
-              >
-                <img src="https://images.unsplash.com/photo-1576941089067-2de3c901e126?auto=format&fit=crop&w=1200&q=80" alt="Familienhaus" />
-                <div class="object-content">
-                  <h3>Familienhaus mit Garten</h3>
-                  <div class="object-meta">
-                    <span>Augsburg</span>
-                    <span>156 m²</span>
-                    <span>5 Zimmer</span>
-                  </div>
-                  <div class="object-price">789.000 €</div>
-                </div>
-              </article>
-
-              <article
-                class="object-card"
-                data-title="Kapitalanlage in zentraler Lage"
-                data-location="Nürnberg"
-                data-size="61 m²"
-                data-rooms="2 Zimmer"
-                data-price="298.000 €"
-                data-image="https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1200&q=80"
-                data-description="Attraktive Wohnung als Kapitalanlage in guter Innenstadtlage. Das Objekt bietet eine solide Vermietbarkeit, eine funktionale Aufteilung und ein interessantes Potenzial für langfristige Investoren."
-              >
-                <img src="https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1200&q=80" alt="Kapitalanlage" />
-                <div class="object-content">
-                  <h3>Kapitalanlage in zentraler Lage</h3>
-                  <div class="object-meta">
-                    <span>Nürnberg</span>
-                    <span>61 m²</span>
-                    <span>2 Zimmer</span>
-                  </div>
-                  <div class="object-price">298.000 €</div>
-                </div>
-              </article>
-
-            </div>
-          </div>
-        </div>
+          <button type="submit" class="submit-btn">Anfrage senden</button>
+        </form>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="section" id="faq">
-      <div class="container">
-        <h2 class="section-title">Häufige Fragen</h2>
-        <p class="section-subtitle">
-          Hier finden Sie Antworten auf häufige Fragen rund um Verkauf, Vermietung und Zusammenarbeit.
-        </p>
-
-        <div class="faq-list">
-          <div class="faq-item active">
-            <button class="faq-question" type="button">Was kostet die Zusammenarbeit mit einem Makler?</button>
-            <div class="faq-answer">
-              Die Kosten hängen vom Auftrag und der Art der Vermarktung ab. Gerne besprechen wir die Konditionen transparent im persönlichen Gespräch.
-            </div>
-          </div>
-
-          <div class="faq-item">
-            <button class="faq-question" type="button">Wie lange dauert der Verkauf einer Immobilie?</button>
-            <div class="faq-answer">
-              Das hängt von Lage, Preis, Zustand und Nachfrage ab. Eine professionelle Vorbereitung verkürzt den Prozess in vielen Fällen deutlich.
-            </div>
-          </div>
-
-          <div class="faq-item">
-            <button class="faq-question" type="button">Bieten Sie auch eine Immobilienbewertung an?</button>
-            <div class="faq-answer">
-              Ja, wir unterstützen Sie mit einer realistischen Marktwerteinschätzung als Grundlage für Ihre Entscheidung.
-            </div>
-          </div>
-        </div>
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div>
+        <h3>Deisterblick Immobilien</h3>
+        <p>Ihr Ansprechpartner für Verwaltung, Makler und Finanzierung am Deister und Umgebung.</p>
       </div>
-    </section>
 
-    <section class="section" id="kontakt">
-      <div class="container">
-        <h2 class="section-title">Kontakt</h2>
-        <p class="section-subtitle">
-          Sie möchten verkaufen, vermieten oder sich unverbindlich beraten lassen? Schreiben Sie uns.
-        </p>
-
-        <div class="contact-wrap">
-          <div class="contact-info">
-            <h3>So erreichen Sie uns</h3>
-            <p>
-              Wir nehmen uns Zeit für Ihr Anliegen und melden uns schnellstmöglich bei Ihnen zurück.
-            </p>
-
-            <ul class="contact-list">
-              <li><strong>E-Mail:</strong> <a href="mailto:info@maklerwebseite.de">info@maklerwebseite.de</a></li>
-              <li><strong>Telefon:</strong> <a href="tel:+491234567890">+49 123 4567890</a></li>
-              <li><strong>Adresse:</strong> Musterstraße 12, 12345 Musterstadt</li>
-            </ul>
-          </div>
-
-          <div class="contact-form-box">
-            <h3>Nachricht senden</h3>
-            <form>
-              <div class="form-group">
-                <input type="text" name="name" placeholder="Ihr Name" required />
-              </div>
-
-              <div class="form-group">
-                <input type="email" name="email" placeholder="Ihre E-Mail-Adresse" required />
-              </div>
-
-              <div class="form-group">
-                <input type="text" name="betreff" placeholder="Betreff" />
-              </div>
-
-              <div class="form-group">
-                <textarea name="nachricht" placeholder="Ihre Nachricht" required></textarea>
-              </div>
-
-              <div class="datenschutz">
-                <label class="checkbox-container">
-                  <input type="checkbox" required />
-                  <span>
-                    Ich habe die <a href="#">Datenschutzerklärung</a> gelesen und akzeptiere sie.
-                  </span>
-                </label>
-              </div>
-
-              <button type="submit" class="btn btn-primary">Absenden</button>
-            </form>
-          </div>
-        </div>
+      <div>
+        <h3>Kontakt</h3>
+        <p>Telefon: 0177 - 2929512</p>
+        <p>E-Mail: info@deisterblick-immobilien.de</p>
+        <p>Adresse: Siedlunghöhenluft 36, 30890 Barsinghausen</p>
       </div>
-    </section>
-  </main>
 
-  <footer>
-    <div class="container footer-inner">
-      <div>© 2026 MaklerWebseite. Alle Rechte vorbehalten.</div>
-      <div class="footer-links">
-        <a href="#">Impressum</a>
-        <a href="#">Datenschutz</a>
+      <div>
+        <h3>Rechtliches</h3>
+        <p>Impressum</p>
+        <p>Datenschutz</p>
+        <p>AGB</p>
       </div>
     </div>
   </footer>
 
-  <div class="modal" id="objectModal" aria-hidden="true">
-    <div class="modal-content">
-      <button class="modal-close" id="closeModal" aria-label="Popup schließen">&times;</button>
-      <img src="" alt="" class="modal-image" id="modalImage" />
-      <div class="modal-body">
-        <h3 id="modalTitle"></h3>
-        <div class="modal-meta">
-          <span id="modalLocation"></span>
-          <span id="modalSize"></span>
-          <span id="modalRooms"></span>
-        </div>
-        <div class="modal-price" id="modalPrice"></div>
-        <p class="modal-description" id="modalDescription"></p>
+  <button type="button" class="scroll-top-btn" id="scroll-top-btn" aria-label="Ganz nach oben">
+    <span class="scroll-top-icon">↑</span>
+    <span class="scroll-top-text">Ganz nach oben</span>
+  </button>
+
+  <div class="modal-overlay" id="object-modal" aria-hidden="true">
+    <div class="modal-box object-modal-box" role="dialog" aria-modal="true" aria-labelledby="object-modal-title">
+      <button type="button" class="object-modal-nav object-modal-prev" id="object-modal-prev" aria-label="Vorheriges Objekt">‹</button>
+      <button type="button" class="object-modal-nav object-modal-next" id="object-modal-next" aria-label="Nächstes Objekt">›</button>
+
+      <div class="modal-header">
+        <h3 id="object-modal-title">Objekt</h3>
+        <button type="button" class="modal-close" id="close-object-modal" aria-label="Schließen">✕</button>
       </div>
+
+      <div class="modal-content" id="object-modal-content"></div>
     </div>
   </div>
 
-  <button class="back-to-top" id="backToTop" type="button" aria-label="Ganz nach oben">
-    <span>↑</span>
-    <span>Ganz nach oben</span>
-  </button>
-
-  <script>
-    // FAQ
-    const faqItems = document.querySelectorAll(".faq-item");
-
-    faqItems.forEach(item => {
-      const question = item.querySelector(".faq-question");
-      question.addEventListener("click", () => {
-        item.classList.toggle("active");
-      });
-    });
-
-    // Objekt Popup
-    const objectCards = document.querySelectorAll(".object-card");
-    const modal = document.getElementById("objectModal");
-    const closeModal = document.getElementById("closeModal");
-
-    const modalTitle = document.getElementById("modalTitle");
-    const modalLocation = document.getElementById("modalLocation");
-    const modalSize = document.getElementById("modalSize");
-    const modalRooms = document.getElementById("modalRooms");
-    const modalPrice = document.getElementById("modalPrice");
-    const modalDescription = document.getElementById("modalDescription");
-    const modalImage = document.getElementById("modalImage");
-
-    objectCards.forEach(card => {
-      card.addEventListener("click", () => {
-        modalTitle.textContent = card.dataset.title;
-        modalLocation.textContent = "Ort: " + card.dataset.location;
-        modalSize.textContent = "Fläche: " + card.dataset.size;
-        modalRooms.textContent = "Zimmer: " + card.dataset.rooms;
-        modalPrice.textContent = card.dataset.price;
-        modalDescription.textContent = card.dataset.description;
-        modalImage.src = card.dataset.image;
-        modalImage.alt = card.dataset.title;
-
-        modal.classList.add("active");
-        modal.setAttribute("aria-hidden", "false");
-        document.body.style.overflow = "hidden";
-      });
-    });
-
-    function closeObjectModal() {
-      modal.classList.remove("active");
-      modal.setAttribute("aria-hidden", "true");
-      document.body.style.overflow = "";
-    }
-
-    closeModal.addEventListener("click", closeObjectModal);
-
-    modal.addEventListener("click", (e) => {
-      if (e.target === modal) {
-        closeObjectModal();
-      }
-    });
-
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") {
-        closeObjectModal();
-      }
-    });
-
-    // Back to top
-    const backToTop = document.getElementById("backToTop");
-
-    window.addEventListener("scroll", () => {
-      if (window.scrollY > 500) {
-        backToTop.classList.add("show");
-      } else {
-        backToTop.classList.remove("show");
-      }
-    });
-
-    backToTop.addEventListener("click", () => {
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-      });
-    });
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
-```
