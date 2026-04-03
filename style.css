@@ -600,28 +600,31 @@ a {
 }
 
 .checkbox-wrap {
-  display: grid;
-  grid-template-columns: 18px 1fr;
-  align-items: start;
-  column-gap: 12px;
-  row-gap: 0;
-  margin-top: 4px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 12px;
+  width: 100%;
+  margin: 4px 0 0 0;
   font-size: 14px;
   line-height: 1.6;
   color: #5d645f;
   cursor: pointer;
 }
 
-.checkbox-wrap input {
+.checkbox-wrap input[type="checkbox"] {
   width: 18px;
+  min-width: 18px;
   height: 18px;
-  margin: 2px 0 0 0;
-  align-self: start;
+  margin: 3px 0 0 0;
+  flex: 0 0 18px;
 }
 
 .checkbox-wrap span {
   display: block;
+  flex: 1 1 auto;
   min-width: 0;
+  text-align: left;
 }
 
 .submit-btn {
@@ -1075,8 +1078,7 @@ a {
   }
 
   .checkbox-wrap {
-    grid-template-columns: 18px 1fr;
-    column-gap: 10px;
+    gap: 10px;
     font-size: 13px;
   }
 }
