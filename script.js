@@ -95,6 +95,13 @@ const contactForm = document.getElementById("contact-form");
 if (contactForm) {
   contactForm.addEventListener("submit", (e) => {
     e.preventDefault();
+
+    const privacy = contactForm.querySelector('input[name="privacy"]');
+    if (privacy && !privacy.checked) {
+      alert("Bitte bestätigen Sie die Datenschutzhinweise.");
+      return;
+    }
+
     alert("Dieses Hauptformular kannst du später ebenfalls mit Formspree verbinden.");
   });
 }
