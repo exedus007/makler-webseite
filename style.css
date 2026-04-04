@@ -125,12 +125,6 @@ a {
     linear-gradient(135deg, #efe8db 0%, #f8f4ec 48%, #f0eadf 100%);
 }
 
-.hero-overlay {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
 .hero-grid {
   position: relative;
   z-index: 1;
@@ -306,19 +300,88 @@ a {
 
 .objects-card {
   background: #fff;
-  border-radius: 22px;
-  padding: 24px;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06);
+  border-radius: 24px;
+  padding: 22px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.06);
+  border: 1px solid #ebe8e1;
 }
 
 .objects-dynamic-list {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
+}
+
+.object-item {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 18px;
+  align-items: center;
+  width: 100%;
+  border: 1px solid #e7ebe8;
+  background: #fcfcfb;
+  border-radius: 18px;
+  padding: 14px;
+  cursor: pointer;
+  text-align: left;
+  transition: 0.2s ease;
+}
+
+.object-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.06);
+  background: #ffffff;
+}
+
+.object-item img {
+  width: 150px;
+  height: 108px;
+  border-radius: 14px;
+  object-fit: cover;
+}
+
+.object-text strong {
+  display: block;
+  margin-bottom: 6px;
+  color: #12392d;
+  font-size: 18px;
+}
+
+.object-text p {
+  margin: 0;
+  color: #5b625e;
+  font-size: 14px;
+}
+
+.object-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.object-status-verfuegbar {
+  background: #e7f3ee;
+  color: #0f4b3a;
+}
+
+.object-status-reserviert {
+  background: #fff3cd;
+  color: #8a6d00;
+}
+
+.object-status-verkauft {
+  background: #e6e6e6;
+  color: #444;
 }
 
 .objects-empty {
   color: #666;
+  padding: 10px 2px;
 }
 
 .about-grid {
@@ -938,6 +1001,16 @@ a {
     height: 220px;
   }
 
+  .object-item {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .object-item img {
+    width: 100%;
+    height: 200px;
+  }
+
   .scroll-top-text {
     display: none;
   }
@@ -958,6 +1031,10 @@ a {
 
   .profile-card img {
     height: 190px;
+  }
+
+  .object-item img {
+    height: 180px;
   }
 
   .object-modal-nav {
