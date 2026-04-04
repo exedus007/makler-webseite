@@ -72,6 +72,15 @@ select:focus-visible {
   border: 0;
 }
 
+.hp-field {
+  position: absolute !important;
+  left: -9999px !important;
+  width: 1px !important;
+  height: 1px !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
 .container {
   width: min(1180px, calc(100% - 32px));
   margin: 0 auto;
@@ -512,6 +521,13 @@ select:focus-visible {
   font-size: 14px;
 }
 
+.object-reference {
+  margin-top: 6px !important;
+  font-size: 13px !important;
+  color: var(--primary) !important;
+  font-weight: 700;
+}
+
 .object-status-badge {
   display: inline-flex;
   align-items: center;
@@ -743,6 +759,7 @@ select:focus-visible {
   display: flex;
   flex-direction: column;
   gap: 18px;
+  position: relative;
 }
 
 .contact-form-grid {
@@ -805,6 +822,36 @@ select:focus-visible {
   color: var(--primary);
   font-weight: 700;
   text-decoration: underline;
+}
+
+.object-checkbox-wrap {
+  margin-top: 14px;
+}
+
+.form-status {
+  display: none;
+  margin-top: 4px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.form-status.success,
+.form-status.error {
+  display: block;
+}
+
+.form-status.success {
+  background: #e7f3ee;
+  color: #0f4b3a;
+  border: 1px solid #cfe4da;
+}
+
+.form-status.error {
+  background: #fff1f1;
+  color: #8a1f1f;
+  border: 1px solid #f0c7c7;
 }
 
 .submit-btn {
@@ -1022,6 +1069,11 @@ select:focus-visible {
   background: var(--primary-dark);
 }
 
+.object-action-btn.primary:disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
+}
+
 .object-action-btn.secondary {
   background: #eef4f1;
   color: var(--primary);
@@ -1048,6 +1100,7 @@ select:focus-visible {
   border: 1px solid #e1ebe5;
   border-radius: 16px;
   padding: 18px;
+  position: relative;
 }
 
 .object-inquiry-form h5 {
