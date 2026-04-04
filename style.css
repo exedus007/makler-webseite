@@ -1,41 +1,24 @@
-* {
-  box-sizing: border-box;
-}
-
-html {
-  scroll-behavior: smooth;
-  overflow-x: hidden;
-}
-
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f7f5f1;
-  color: #1e1e1e;
-  overflow-x: hidden;
+  font-family: Arial;
 }
 
-/* Container */
 .container {
-  width: min(1180px, calc(100% - 24px));
-  margin: 0 auto;
+  width: 90%;
+  max-width: 1100px;
+  margin: auto;
 }
 
-/* TOPBAR */
+/* Topbar */
 .topbar {
   background: #0f4b3a;
-  color: #fff;
-  font-size: 14px;
-  padding: 8px 0;
+  color: white;
+  padding: 10px;
 }
 
-/* NAVBAR */
+/* Navbar */
 .navbar {
-  position: sticky;
-  top: 0;
   background: white;
-  z-index: 1000;
-  border-bottom: 1px solid #eee;
 }
 
 .nav-container {
@@ -44,183 +27,107 @@ body {
   align-items: center;
 }
 
-.logo img {
-  height: 110px;
-  transform: scaleX(1.1);
-}
-
-/* NAV LINKS */
-.nav-links {
-  display: flex;
-  gap: 20px;
-}
-
-.nav-links a {
-  font-weight: bold;
-  color: #0f4b3a;
+.logo {
+  height: 90px;
+  transform: scaleX(1.2);
 }
 
 /* HERO */
 .hero {
-  padding: 70px 0;
-  background: linear-gradient(135deg,#efe4d1,#f8f4ec);
+  padding: 80px 0;
+  background: #f3eee6;
 }
 
-.hero-grid {
-  display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
-  gap: 40px;
-  align-items: center;
-}
-
-.hero-left h1 {
-  font-size: clamp(32px, 5vw, 60px);
-  line-height: 1.1;
-}
-
-.hero-text {
-  font-size: 18px;
-}
-
-/* TAGS */
-.hero-tags-better {
-  display: grid;
-  grid-template-columns: repeat(2,1fr);
-  gap: 10px;
-}
-
-.hero-tags-better span {
-  background: white;
-  padding: 10px;
-  border-radius: 20px;
-  text-align: center;
-}
-
-/* BUTTONS */
-.btn {
-  padding: 12px 20px;
-  background: #0f4b3a;
-  color: white;
-  border-radius: 10px;
-}
-
-.btn-light {
-  background: white;
-  color: #0f4b3a;
-}
-
-/* IMAGE */
-.hero-right img {
-  width: 100%;
-  height: 450px;
-  object-fit: cover;
-}
-
-/* GRID */
-.cards-grid {
-  display: grid;
-  grid-template-columns: repeat(3,1fr);
-  gap: 20px;
-}
-
-.card {
-  background: white;
-  padding: 20px;
+.hero h1 {
+  font-size: 60px;
+  color: #12392d;
 }
 
 /* CONTACT */
-.contact-layout {
+.contact-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
 }
 
-.contact-action-btn {
-  display: flex;
-  gap: 10px;
+/* BUTTONS */
+.contact-btn {
+  display: block;
+  background: #eee;
   padding: 15px;
-  background: white;
-  border-radius: 10px;
-}
-
-/* FORM */
-.contact-form input,
-.contact-form textarea {
-  width: 100%;
-  padding: 12px;
   margin-bottom: 10px;
-}
-
-.submit-btn {
-  width: 100%;
-}
-
-/* FOOTER */
-.footer {
-  background: #0f4b3a;
-  color: white;
-  padding: 30px 0;
+  text-decoration: none;
 }
 
 /* ========================= */
-/* 🔥 MOBILE OPTIMIERUNG */
+/* 🔥 NUR MOBILE FIXES */
 /* ========================= */
 
 @media (max-width: 900px) {
 
-  .hero-grid,
-  .contact-layout,
-  .cards-grid {
+  /* Layout sauber */
+  .contact-grid {
     grid-template-columns: 1fr;
-  }
-
-  .hero-right img {
-    height: 300px;
-  }
-
-  .hero-tags-better {
-    grid-template-columns: 1fr;
+    gap: 20px;
   }
 
 }
 
 /* ========================= */
-/* 📱 HANDY */
+/* 📱 HANDY FIXES */
 /* ========================= */
 
 @media (max-width: 600px) {
+
+  /* Kein seitliches Scrollen */
+  body {
+    overflow-x: hidden;
+  }
 
   .container {
     width: calc(100% - 16px);
   }
 
+  /* HERO sauber */
   .hero {
     padding: 40px 0;
   }
 
-  .hero-left h1 {
-    font-size: 28px;
+  .hero h1 {
+    font-size: 32px;
+    line-height: 1.2;
   }
 
   .hero-text {
     font-size: 16px;
   }
 
-  .logo img {
-    height: 80px;
+  /* LOGO */
+  .logo {
+    height: 70px;
+    transform: scaleX(1.1);
   }
 
+  /* NAV fix */
   .nav-links {
     display: none;
   }
 
-  .hero-right img {
-    height: 220px;
+  /* BUTTONS besser klickbar */
+  .contact-btn {
+    font-size: 16px;
+    padding: 16px;
+    border-radius: 10px;
   }
 
-  .contact-action-btn {
-    flex-direction: row;
-    font-size: 14px;
+  /* FORM */
+  input,
+  textarea {
+    font-size: 16px;
+  }
+
+  button {
+    width: 100%;
+    font-size: 16px;
   }
 
 }
