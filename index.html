@@ -4,10 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Deisterblick Immobilien</title>
-  <meta
-    name="description"
-    content="Deisterblick Immobilien – Verwaltung, Makler und Finanzierung. Persönliche Beratung rund um Verkauf, Bewertung und Vermarktung von Immobilien am Deister und Umgebung."
-  >
+  <meta name="description" content="Deisterblick Immobilien – Verwaltung, Makler und Finanzierung.">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -22,10 +19,10 @@
   <nav class="navbar">
     <div class="container nav-container">
       <a href="#home" class="logo">
-        <img src="assets/logo.jpg" alt="Deisterblick Immobilien Logo">
+        <img src="assets/logo.jpg" alt="Logo">
       </a>
 
-      <button class="menu-toggle" id="menu-toggle" aria-label="Menü öffnen" aria-expanded="false">
+      <button class="menu-toggle" id="menu-toggle">
         <span></span>
         <span></span>
         <span></span>
@@ -33,89 +30,57 @@
 
       <div class="nav-links" id="nav-links">
         <a href="#home">Start</a>
-        <a href="#leistungen">Leistungen</a>
-        <a href="#meine-objekte">Meine Objekte</a>
-        <a href="#uebermich">Über mich</a>
-        <a href="#bewertung">Bewertung</a>
-        <a href="#faq">FAQ</a>
         <a href="#kontakt">Kontakt</a>
       </div>
     </div>
   </nav>
 
   <header class="hero" id="home">
-    <div class="hero-overlay"></div>
-
     <div class="container hero-grid">
-      <div class="hero-left reveal">
-        <p class="eyebrow">Verwaltung · Makler · Finanzierung</p>
-        <h1>Ihr Immobilienpartner am Deister und Umgebung</h1>
-        <p class="hero-text">
-          Deisterblick Immobilien steht für persönliche Beratung, regionale Marktkenntnis
-          und eine vertrauensvolle Begleitung rund um Verkauf, Vermietung und Immobilienservice.
-        </p>
-
-        <div class="hero-buttons">
-          <a href="#kontakt" class="btn">Jetzt Beratung anfragen</a>
-        </div>
-      </div>
-
-      <div class="hero-right reveal reveal-delay">
-        <div class="hero-image-card">
-          <img src="assets/makler.jpg" alt="Deisterblick Immobilien">
-        </div>
+      <div>
+        <h1>Ihr Immobilienpartner</h1>
+        <a href="#kontakt" class="btn">Kontakt</a>
       </div>
     </div>
   </header>
 
   <section class="section" id="kontakt">
     <div class="container contact-grid">
-      <div class="contact-info reveal">
+
+      <div>
         <h2>Kontakt</h2>
-        <p>Senden Sie uns eine Nachricht.</p>
       </div>
 
-      <div class="form-box reveal reveal-delay">
+      <div class="form-box">
         <form class="contact-form" id="contact-form">
 
           <input type="text" name="name" placeholder="Ihr Name" required>
           <input type="email" name="email" placeholder="Ihre E-Mail" required>
           <textarea name="message" rows="6" placeholder="Ihre Nachricht" required></textarea>
 
-          <!-- ✅ HIER IST DIE ÄNDERUNG -->
+          <!-- ✅ KORREKT -->
           <label class="checkbox-wrap">
             <input type="checkbox" name="privacy" required>
             <span>
               Ich habe die
               <a href="assets/datenschutzbestimmungen.pdf" target="_blank" rel="noopener noreferrer">
-                datenschutzbestimmungen.pdf
+                Datenschutzbestimmungen
               </a>
               gelesen und bin damit einverstanden, dass meine Angaben zur Bearbeitung meiner Anfrage gespeichert und verarbeitet werden.
             </span>
           </label>
 
           <button type="submit" class="submit-btn">Anfrage senden</button>
+
         </form>
       </div>
+
     </div>
   </section>
 
   <footer class="footer">
-    <div class="container footer-grid">
-      <div>
-        <h3>Deisterblick Immobilien</h3>
-      </div>
-
-      <div>
-        <h3>Kontakt</h3>
-        <p>info@deisterblick-immobilien.de</p>
-      </div>
-
-      <div>
-        <h3>Rechtliches</h3>
-        <p><a href="impressum.html">Impressum</a></p>
-        <p><a href="datenschutz.html">Datenschutz</a></p>
-      </div>
+    <div class="container">
+      <p>© Deisterblick Immobilien</p>
     </div>
   </footer>
 
