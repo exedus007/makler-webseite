@@ -4,6 +4,7 @@ const formspreeEndpoint = "https://formspree.io/f/DEINE_FORMSPREE_ID";
 
 let objekteListe = [];
 let aktuellerObjektIndex = 0;
+let lastFocusedElement = null;
 
 function escapeHtml(value) {
   return String(value ?? "")
@@ -49,26 +50,80 @@ function statusBadgeClass(status) {
 
 const menuToggle = document.getElementById("menu-toggle");
 const navLinks = document.getElementById("nav-links");
+const navBackdrop = document.getElementById("nav-backdrop");
+
+function istMobileNavigation() {
+  return window.innerWidth <= 768;
+}
+
+function oeffneMenue() {
+  if (!menuToggle || !navLinks) return;
+
+  navLinks.classList.add("open");
+  menuToggle.classList.add("active");
+  menuToggle.setAttribute("aria-expanded", "true");
+  document.body.classList.add("nav-open");
+
+  if (navBackdrop) {
+    navBackdrop.hidden = false;
+    navBackdrop.classList.add("show");
+  }
+}
+
+function schliesseMenue() {
+  if (!menuToggle || !navLinks) return;
+
+  navLinks.classList.remove("open");
+  menuToggle.classList.remove("active");
+  menuToggle.setAttribute("aria-expanded", "false");
+  document.body.classList.remove("nav-open");
+
+  if (navBackdrop) {
+    navBackdrop.classList.remove("show");
+    navBackdrop.hidden = true;
+  }
+}
 
 if (menuToggle && navLinks) {
   menuToggle.addEventListener("click", () => {
-    navLinks.classList.toggle("open");
-    const expanded = menuToggle.getAttribute("aria-expanded") === "true";
-    menuToggle.setAttribute("aria-expanded", String(!expanded));
+    const isOpen = navLinks.classList.contains("open");
+    if (isOpen) {
+      schliesseMenue();
+    } else {
+      oeffneMenue();
+    }
   });
 
   navLinks.querySelectorAll("a").forEach((link) => {
     link.addEventListener("click", () => {
-      navLinks.classList.remove("open");
-      menuToggle.setAttribute("aria-expanded", "false");
+      if (istMobileNavigation()) {
+        schliesseMenue();
+      }
     });
   });
 }
+
+if (navBackdrop) {
+  navBackdrop.addEventListener("click", schliesseMenue);
+}
+
+window.addEventListener("resize", () => {
+  if (!istMobileNavigation()) {
+    schliesseMenue();
+  }
+});
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && navLinks?.classList.contains("open")) {
+    schliesseMenue();
+  }
+});
 
 document.querySelectorAll(".faq-question").forEach((btn) => {
   btn.addEventListener("click", () => {
     const item = btn.closest(".faq-item");
     const expanded = btn.getAttribute("aria-expanded") === "true";
+
     btn.setAttribute("aria-expanded", String(!expanded));
     item.classList.toggle("open");
   });
@@ -78,6 +133,7 @@ const scrollTopBtn = document.getElementById("scroll-top-btn");
 
 window.addEventListener("scroll", () => {
   if (!scrollTopBtn) return;
+
   if (window.scrollY > 500) {
     scrollTopBtn.classList.add("show");
   } else {
@@ -169,7 +225,7 @@ async function ladeObjekte() {
     const res = await fetch(url);
 
     if (!res.ok) {
-      throw new Error(`HTTP-Fehler: ${res.status}`);
+      throw new Error(\`HTTP-Fehler: \${res.status}\`);
     }
 
     const data = await res.json();
@@ -181,6 +237,7 @@ async function ladeObjekte() {
     }
 
     container.innerHTML = "";
+    const fragment = document.createDocumentFragment();
 
     objekteListe.forEach((objekt, index) => {
       const button = document.createElement("button");
@@ -193,7 +250,7 @@ async function ladeObjekte() {
       const bildUrl = objekt?.bild?.asset?._ref ? bildUrlAusRef(objekt.bild.asset._ref) : "assets/makler.jpg";
 
       button.innerHTML = `
-        <img src="${bildUrl}" alt="${titel}">
+        <img src="${bildUrl}" alt="${titel}" loading="lazy">
         <div class="object-text">
           <strong>${titel}</strong>
           <p>${wohnflaeche} ${wohnflaeche && ort ? "·" : ""} ${ort}</p>
@@ -206,8 +263,10 @@ async function ladeObjekte() {
         zeigeObjektModal(index);
       });
 
-      container.appendChild(button);
+      fragment.appendChild(button);
     });
+
+    container.appendChild(fragment);
   } catch (error) {
     console.error("Fehler beim Laden der Objekte:", error);
     container.innerHTML = '<p class="objects-empty">Fehler beim Laden der Objekte.</p>';
@@ -221,9 +280,44 @@ const closeObjectModal = document.getElementById("close-object-modal");
 const prevObjectModal = document.getElementById("object-modal-prev");
 const nextObjectModal = document.getElementById("object-modal-next");
 
+function focusFirstModalElement() {
+  if (!objectModal) return;
+  const focusable = objectModal.querySelectorAll(
+    'button, a[href], input, textarea, select, [tabindex]:not([tabindex="-1"])'
+  );
+  if (focusable.length) {
+    focusable[0].focus();
+  }
+}
+
+function trapModalFocus(e) {
+  if (!objectModal || !objectModal.classList.contains("open")) return;
+
+  const focusable = objectModal.querySelectorAll(
+    'button, a[href], input, textarea, select, [tabindex]:not([tabindex="-1"])'
+  );
+
+  if (!focusable.length) return;
+
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+
+  if (e.key === "Tab") {
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  }
+}
+
 function zeigeObjektModal(index) {
   const obj = objekteListe[index];
   if (!obj || !objectModal || !objectModalContent || !objectModalTitle) return;
+
+  lastFocusedElement = document.activeElement;
 
   const titel = escapeHtml(obj.titel || "Objekt");
   const ort = escapeHtml(obj.ort || "");
@@ -242,7 +336,7 @@ function zeigeObjektModal(index) {
   objectModalContent.innerHTML = `
     <div class="object-modal-layout">
       <div class="object-modal-visual">
-        <img src="${bildUrl}" alt="${titel}" class="object-modal-image">
+        <img src="${bildUrl}" alt="${titel}" class="object-modal-image" loading="lazy">
       </div>
 
       <div class="object-modal-info">
@@ -290,17 +384,17 @@ function zeigeObjektModal(index) {
           <div class="object-form-grid">
             <div class="object-form-group">
               <label for="object-name">Name</label>
-              <input id="object-name" type="text" name="name" required>
+              <input id="object-name" type="text" name="name" autocomplete="name" required>
             </div>
 
             <div class="object-form-group">
               <label for="object-email">E-Mail</label>
-              <input id="object-email" type="email" name="email" required>
+              <input id="object-email" type="email" name="email" autocomplete="email" required>
             </div>
 
             <div class="object-form-group">
               <label for="object-phone">Telefon</label>
-              <input id="object-phone" type="text" name="telefon">
+              <input id="object-phone" type="text" name="telefon" autocomplete="tel">
             </div>
 
             <div class="object-form-group">
@@ -339,13 +433,22 @@ Vielen Dank.</textarea>
   objectModal.classList.add("open");
   objectModal.setAttribute("aria-hidden", "false");
   document.body.classList.add("modal-open");
+
+  setTimeout(() => {
+    focusFirstModalElement();
+  }, 0);
 }
 
 function schliesseObjektModal() {
   if (!objectModal) return;
+
   objectModal.classList.remove("open");
   objectModal.setAttribute("aria-hidden", "true");
   document.body.classList.remove("modal-open");
+
+  if (lastFocusedElement && typeof lastFocusedElement.focus === "function") {
+    lastFocusedElement.focus();
+  }
 }
 
 function vorherigesObjekt() {
@@ -386,6 +489,7 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") schliesseObjektModal();
   if (e.key === "ArrowLeft") vorherigesObjekt();
   if (e.key === "ArrowRight") naechstesObjekt();
+  trapModalFocus(e);
 });
 
 ladeObjekte();
