@@ -1,9 +1,18 @@
 const projectId = "lya1es34";
 const dataset = "production";
-const formspreeEndpoint = "https://formspree.io/f/DEIN_FORM_ID";
+const formspreeEndpoint = "https://formspree.io/f/DEINE_FORMSPREE_ID";
 
 let objekteListe = [];
 let aktuellerObjektIndex = 0;
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
 
 function bildUrlAusRef(ref) {
   if (!ref) return "";
@@ -11,6 +20,8 @@ function bildUrlAusRef(ref) {
   const id = parts[1];
   const dimensions = parts[2];
   const format = parts[3];
+
+  if (!id || !dimensions || !format) return "";
   return `https://cdn.sanity.io/images/${projectId}/${dataset}/${id}-${dimensions}.${format}`;
 }
 
@@ -19,6 +30,8 @@ function exposeUrlAusRef(ref) {
   const parts = ref.split("-");
   const id = parts[1];
   const format = parts[2];
+
+  if (!id || !format) return "";
   return `https://cdn.sanity.io/files/${projectId}/${dataset}/${id}.${format}`;
 }
 
@@ -29,7 +42,9 @@ function statusText(status) {
 }
 
 function statusBadgeClass(status) {
-  return status === "reserviert" ? "object-status-reserviert" : "object-status-verfuegbar";
+  if (status === "reserviert") return "object-status-reserviert";
+  if (status === "verkauft") return "object-status-verkauft";
+  return "object-status-verfuegbar";
 }
 
 /* Menü */
@@ -43,7 +58,7 @@ if (menuToggle && navLinks) {
     menuToggle.setAttribute("aria-expanded", String(!expanded));
   });
 
-  navLinks.querySelectorAll("a").forEach(link => {
+  navLinks.querySelectorAll("a").forEach((link) => {
     link.addEventListener("click", () => {
       navLinks.classList.remove("open");
       menuToggle.setAttribute("aria-expanded", "false");
@@ -52,10 +67,11 @@ if (menuToggle && navLinks) {
 }
 
 /* FAQ */
-document.querySelectorAll(".faq-question").forEach(btn => {
+document.querySelectorAll(".faq-question").forEach((btn) => {
   btn.addEventListener("click", () => {
     const item = btn.closest(".faq-item");
     const expanded = btn.getAttribute("aria-expanded") === "true";
+
     btn.setAttribute("aria-expanded", String(!expanded));
     item.classList.toggle("open");
   });
@@ -63,20 +79,28 @@ document.querySelectorAll(".faq-question").forEach(btn => {
 
 /* Reveal */
 const revealElements = document.querySelectorAll(".reveal");
-const revealObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add("revealed");
-      revealObserver.unobserve(entry.target);
-    }
-  });
-}, { threshold: 0.12 });
 
-revealElements.forEach(el => revealObserver.observe(el));
+if ("IntersectionObserver" in window && revealElements.length) {
+  const revealObserver = new IntersectionObserver((entries, observer) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("revealed");
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  revealElements.forEach((el) => revealObserver.observe(el));
+} else {
+  revealElements.forEach((el) => el.classList.add("revealed"));
+}
 
 /* Scroll top */
 const scrollTopBtn = document.getElementById("scroll-top-btn");
+
 window.addEventListener("scroll", () => {
+  if (!scrollTopBtn) return;
+
   if (window.scrollY > 500) {
     scrollTopBtn.classList.add("show");
   } else {
@@ -92,8 +116,9 @@ if (scrollTopBtn) {
 
 /* Kontaktformular Hauptformular */
 const contactForm = document.getElementById("contact-form");
+
 if (contactForm) {
-  contactForm.addEventListener("submit", (e) => {
+  contactForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const privacy = contactForm.querySelector('input[name="privacy"]');
@@ -102,7 +127,45 @@ if (contactForm) {
       return;
     }
 
-    alert("Dieses Hauptformular kannst du später ebenfalls mit Formspree verbinden.");
+    if (formspreeEndpoint.includes("DEINE_FORMSPREE_ID")) {
+      alert("Bitte tragen Sie zuerst Ihre echte Formspree-ID in der script.js ein.");
+      return;
+    }
+
+    const submitButton = contactForm.querySelector(".submit-btn");
+    const originalButtonText = submitButton ? submitButton.textContent : "";
+
+    if (submitButton) {
+      submitButton.disabled = true;
+      submitButton.textContent = "Wird gesendet...";
+    }
+
+    try {
+      const formData = new FormData(contactForm);
+
+      const response = await fetch(formspreeEndpoint, {
+        method: "POST",
+        body: formData,
+        headers: {
+          Accept: "application/json"
+        }
+      });
+
+      if (response.ok) {
+        alert("Vielen Dank! Ihre Anfrage wurde erfolgreich gesendet.");
+        contactForm.reset();
+      } else {
+        alert("Beim Senden ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.");
+      }
+    } catch (error) {
+      console.error("Fehler beim Senden des Hauptformulars:", error);
+      alert("Beim Senden ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.");
+    } finally {
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.textContent = originalButtonText;
+      }
+    }
   });
 }
 
@@ -112,12 +175,30 @@ async function ladeObjekte() {
   if (!container) return;
 
   try {
-    const query = encodeURIComponent('*[_type=="immobilie"]');
+    const query = encodeURIComponent(`
+      *[_type=="immobilie"] | order(_createdAt desc){
+        _id,
+        titel,
+        ort,
+        preis,
+        wohnflaeche,
+        zimmer,
+        status,
+        beschreibung,
+        bild,
+        expose
+      }
+    `);
+
     const url = `https://${projectId}.api.sanity.io/v2023-01-01/data/query/${dataset}?query=${query}`;
     const res = await fetch(url);
-    const data = await res.json();
 
-    objekteListe = (data.result || []).filter(obj => obj.status !== "verkauft");
+    if (!res.ok) {
+      throw new Error(`HTTP-Fehler: ${res.status}`);
+    }
+
+    const data = await res.json();
+    objekteListe = (data.result || []).filter((obj) => obj.status !== "verkauft");
 
     if (objekteListe.length === 0) {
       container.innerHTML = '<p class="objects-empty">Aktuell sind keine verfügbaren oder reservierten Objekte vorhanden.</p>';
@@ -131,18 +212,16 @@ async function ladeObjekte() {
       button.type = "button";
       button.className = "object-item";
 
-      let bildUrl = "";
-      if (objekt.bild && objekt.bild.asset && objekt.bild.asset._ref) {
-        bildUrl = bildUrlAusRef(objekt.bild.asset._ref);
-      } else {
-        bildUrl = "assets/makler.jpg";
-      }
+      const titel = escapeHtml(objekt.titel || "Objekt");
+      const wohnflaeche = escapeHtml(objekt.wohnflaeche || "");
+      const ort = escapeHtml(objekt.ort || "");
+      const bildUrl = objekt?.bild?.asset?._ref ? bildUrlAusRef(objekt.bild.asset._ref) : "assets/makler.jpg";
 
       button.innerHTML = `
-        <img src="${bildUrl}" alt="${objekt.titel || "Objekt"}">
+        <img src="${bildUrl}" alt="${titel}">
         <div class="object-text">
-          <strong>${objekt.titel || "Objekt"}</strong>
-          <p>${objekt.wohnflaeche || ""} · ${objekt.ort || ""}</p>
+          <strong>${titel}</strong>
+          <p>${wohnflaeche} ${wohnflaeche && ort ? "·" : ""} ${ort}</p>
           <span class="object-status-badge ${statusBadgeClass(objekt.status)}">${statusText(objekt.status)}</span>
         </div>
       `;
@@ -155,7 +234,7 @@ async function ladeObjekte() {
       container.appendChild(button);
     });
   } catch (error) {
-    console.error(error);
+    console.error("Fehler beim Laden der Objekte:", error);
     container.innerHTML = '<p class="objects-empty">Fehler beim Laden der Objekte.</p>';
   }
 }
@@ -170,56 +249,54 @@ const nextObjectModal = document.getElementById("object-modal-next");
 
 function zeigeObjektModal(index) {
   const obj = objekteListe[index];
-  if (!obj) return;
+  if (!obj || !objectModal || !objectModalContent || !objectModalTitle) return;
+
+  const titel = escapeHtml(obj.titel || "Objekt");
+  const ort = escapeHtml(obj.ort || "");
+  const preis = escapeHtml(obj.preis || "");
+  const wohnflaeche = escapeHtml(obj.wohnflaeche || "");
+  const zimmer = escapeHtml(obj.zimmer || "");
+  const beschreibung = escapeHtml(obj.beschreibung || "");
+  const objektId = escapeHtml(obj._id || "");
+  const status = statusText(obj.status);
 
   objectModalTitle.textContent = obj.titel || "Objekt";
 
-  let bildUrl = "";
-  if (obj.bild && obj.bild.asset && obj.bild.asset._ref) {
-    bildUrl = bildUrlAusRef(obj.bild.asset._ref);
-  } else {
-    bildUrl = "assets/makler.jpg";
-  }
-
-  let exposeUrl = "";
-  if (obj.expose && obj.expose.asset && obj.expose.asset._ref) {
-    exposeUrl = exposeUrlAusRef(obj.expose.asset._ref);
-  }
+  const bildUrl = obj?.bild?.asset?._ref ? bildUrlAusRef(obj.bild.asset._ref) : "assets/makler.jpg";
+  const exposeUrl = obj?.expose?.asset?._ref ? exposeUrlAusRef(obj.expose.asset._ref) : "";
 
   objectModalContent.innerHTML = `
     <div class="object-modal-layout">
       <div class="object-modal-visual">
-        <img src="${bildUrl}" alt="${obj.titel || "Objekt"}" class="object-modal-image">
+        <img src="${bildUrl}" alt="${titel}" class="object-modal-image">
       </div>
 
       <div class="object-modal-info">
-        <h4>${obj.titel || ""}</h4>
+        <h4>${titel}</h4>
 
         <div class="object-modal-meta">
           <div class="object-modal-meta-item">
             <strong>Ort</strong>
-            <span>${obj.ort || ""}</span>
+            <span>${ort}</span>
           </div>
           <div class="object-modal-meta-item">
             <strong>Preis</strong>
-            <span>${obj.preis || ""}</span>
+            <span>${preis}</span>
           </div>
           <div class="object-modal-meta-item">
             <strong>Wohnfläche</strong>
-            <span>${obj.wohnflaeche || ""}</span>
+            <span>${wohnflaeche}</span>
           </div>
           <div class="object-modal-meta-item">
             <strong>Zimmer</strong>
-            <span>${obj.zimmer || ""}</span>
+            <span>${zimmer}</span>
           </div>
         </div>
 
-        <div class="object-modal-description">
-          ${obj.beschreibung || ""}
-        </div>
+        <div class="object-modal-description">${beschreibung}</div>
 
-        <span class="object-status-badge ${statusBadgeClass(obj.status)}">${statusText(obj.status)}</span>
-        <div class="object-modal-id">Objekt-ID: ${obj._id || ""}</div>
+        <span class="object-status-badge ${statusBadgeClass(obj.status)}">${status}</span>
+        <div class="object-modal-id">Objekt-ID: ${objektId}</div>
 
         <div class="object-modal-actions">
           ${
@@ -227,7 +304,6 @@ function zeigeObjektModal(index) {
               ? `<a class="object-action-btn secondary" href="${exposeUrl}" target="_blank" rel="noopener noreferrer">Exposé ansehen</a>`
               : ``
           }
-
           ${
             exposeUrl
               ? `<a class="object-action-btn outline" href="${exposeUrl}" download>Exposé herunterladen</a>`
@@ -238,44 +314,44 @@ function zeigeObjektModal(index) {
         <form class="object-inquiry-form" action="${formspreeEndpoint}" method="POST">
           <h5>Anfrage senden</h5>
 
-          <input type="hidden" name="objekt_id" value="${obj._id || ""}">
-          <input type="hidden" name="objekt_titel" value="${obj.titel || ""}">
-          <input type="hidden" name="objekt_ort" value="${obj.ort || ""}">
-          <input type="hidden" name="objekt_preis" value="${obj.preis || ""}">
-          <input type="hidden" name="objekt_status" value="${statusText(obj.status)}">
-          <input type="hidden" name="_subject" value="Neue Objektanfrage: ${obj.titel || ""} | ID: ${obj._id || ""}">
+          <input type="hidden" name="objekt_id" value="${objektId}">
+          <input type="hidden" name="objekt_titel" value="${titel}">
+          <input type="hidden" name="objekt_ort" value="${ort}">
+          <input type="hidden" name="objekt_preis" value="${preis}">
+          <input type="hidden" name="objekt_status" value="${escapeHtml(status)}">
+          <input type="hidden" name="_subject" value="Neue Objektanfrage: ${titel} | ID: ${objektId}">
 
           <div class="object-form-grid">
             <div class="object-form-group">
-              <label>Name</label>
-              <input type="text" name="name" required>
+              <label for="object-name">Name</label>
+              <input id="object-name" type="text" name="name" required>
             </div>
 
             <div class="object-form-group">
-              <label>E-Mail</label>
-              <input type="email" name="email" required>
+              <label for="object-email">E-Mail</label>
+              <input id="object-email" type="email" name="email" required>
             </div>
 
             <div class="object-form-group">
-              <label>Telefon</label>
-              <input type="text" name="telefon">
+              <label for="object-phone">Telefon</label>
+              <input id="object-phone" type="text" name="telefon">
             </div>
 
             <div class="object-form-group">
-              <label>Betreff</label>
-              <input type="text" name="betreff" value="Anfrage zu ${obj.titel || ""}">
+              <label for="object-betreff">Betreff</label>
+              <input id="object-betreff" type="text" name="betreff" value="Anfrage zu ${titel}">
             </div>
 
             <div class="object-form-group full">
-              <label>Nachricht</label>
-              <textarea name="message" required>Guten Tag,
+              <label for="object-message">Nachricht</label>
+              <textarea id="object-message" name="message" required>Guten Tag,
 
 ich interessiere mich für folgendes Objekt:
 
 Titel: ${obj.titel || ""}
 Ort: ${obj.ort || ""}
 Preis: ${obj.preis || ""}
-Status: ${statusText(obj.status)}
+Status: ${status}
 Objekt-ID: ${obj._id || ""}
 
 Bitte kontaktieren Sie mich.
@@ -300,6 +376,8 @@ Vielen Dank.</textarea>
 }
 
 function schliesseObjektModal() {
+  if (!objectModal) return;
+
   objectModal.classList.remove("open");
   objectModal.setAttribute("aria-hidden", "true");
   document.body.classList.remove("modal-open");
@@ -338,7 +416,7 @@ if (objectModal) {
 }
 
 document.addEventListener("keydown", (e) => {
-  if (!objectModal.classList.contains("open")) return;
+  if (!objectModal || !objectModal.classList.contains("open")) return;
 
   if (e.key === "Escape") schliesseObjektModal();
   if (e.key === "ArrowLeft") vorherigesObjekt();
