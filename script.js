@@ -205,6 +205,8 @@ async function ladeObjekte() {
   const container = document.getElementById("objekte-container");
   if (!container) return;
 
+  container.innerHTML = '<p class="objects-empty">Objekte werden geladen...</p>';
+
   try {
     const query = encodeURIComponent(`
       *[_type=="immobilie"] | order(_createdAt desc){
@@ -216,8 +218,12 @@ async function ladeObjekte() {
         zimmer,
         status,
         beschreibung,
-        bild,
-        expose
+        bild{
+          asset->{_ref}
+        },
+        expose{
+          asset->{_ref}
+        }
       }
     `);
 
@@ -225,7 +231,7 @@ async function ladeObjekte() {
     const res = await fetch(url);
 
     if (!res.ok) {
-      throw new Error(\`HTTP-Fehler: \${res.status}\`);
+      throw new Error(`HTTP-Fehler: ${res.status}`);
     }
 
     const data = await res.json();
@@ -247,13 +253,15 @@ async function ladeObjekte() {
       const titel = escapeHtml(objekt.titel || "Objekt");
       const wohnflaeche = escapeHtml(objekt.wohnflaeche || "");
       const ort = escapeHtml(objekt.ort || "");
-      const bildUrl = objekt?.bild?.asset?._ref ? bildUrlAusRef(objekt.bild.asset._ref) : "assets/makler.jpg";
+      const bildUrl = objekt?.bild?.asset?._ref
+        ? bildUrlAusRef(objekt.bild.asset._ref)
+        : "assets/makler.jpg";
 
       button.innerHTML = `
         <img src="${bildUrl}" alt="${titel}" loading="lazy">
         <div class="object-text">
           <strong>${titel}</strong>
-          <p>${wohnflaeche} ${wohnflaeche && ort ? "·" : ""} ${ort}</p>
+          <p>${wohnflaeche}${wohnflaeche && ort ? " · " : ""}${ort}</p>
           <span class="object-status-badge ${statusBadgeClass(objekt.status)}">${statusText(objekt.status)}</span>
         </div>
       `;
@@ -330,8 +338,13 @@ function zeigeObjektModal(index) {
 
   objectModalTitle.textContent = obj.titel || "Objekt";
 
-  const bildUrl = obj?.bild?.asset?._ref ? bildUrlAusRef(obj.bild.asset._ref) : "assets/makler.jpg";
-  const exposeUrl = obj?.expose?.asset?._ref ? exposeUrlAusRef(obj.expose.asset._ref) : "";
+  const bildUrl = obj?.bild?.asset?._ref
+    ? bildUrlAusRef(obj.bild.asset._ref)
+    : "assets/makler.jpg";
+
+  const exposeUrl = obj?.expose?.asset?._ref
+    ? exposeUrlAusRef(obj.expose.asset._ref)
+    : "";
 
   objectModalContent.innerHTML = `
     <div class="object-modal-layout">
