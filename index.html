@@ -8,19 +8,30 @@
 </head>
 <body>
 
+<!-- TOPBAR -->
 <div class="topbar">
   <div class="container topbar-inner">
     <span>📞 0177 - 2929512</span>
-    <a href="mailto:info@deisterblick-immobilien.de">✉️ info@deisterblick-immobilien.de</a>
+    <a href="mailto:info@deisterblick-immobilien.de" class="topbar-link">✉️ info@deisterblick-immobilien.de</a>
   </div>
 </div>
 
+<!-- NAV -->
 <nav class="navbar">
   <div class="container nav-container">
-    <img src="assets/logo.jpg" class="logo">
+    <a href="#" class="logo">
+      <img src="assets/logo.jpg">
+    </a>
+
+    <div class="nav-links">
+      <a href="#">Start</a>
+      <a href="#">Leistungen</a>
+      <a href="#">Kontakt</a>
+    </div>
   </div>
 </nav>
 
+<!-- HERO -->
 <header class="hero">
   <div class="container hero-grid">
 
@@ -34,24 +45,8 @@
 
       <p class="hero-text">
         Deisterblick Immobilien steht für persönliche Beratung, regionale Marktkenntnis
-        und eine vertrauensvolle Begleitung rund um Verkauf und Vermietung.
+        und eine vertrauensvolle Begleitung rund um Verkauf, Vermietung und Immobilienservice.
       </p>
-
-      <!-- 6 Punkte -->
-      <div class="hero-tags">
-        <span>Immobilien Makler</span>
-        <span>Immobilienbewertung</span>
-        <span>Finanzierung</span>
-        <span>Verwaltung</span>
-        <span>Sanierung</span>
-        <span>Persönliche Betreuung</span>
-      </div>
-
-      <!-- Buttons -->
-      <div class="hero-buttons">
-        <a href="#" class="btn">Jetzt Beratung anfragen</a>
-        <a href="#" class="btn btn-green">Immobilie bewerten</a>
-      </div>
 
     </div>
 
@@ -61,6 +56,72 @@
 
   </div>
 </header>
+
+<!-- KONTAKT -->
+<section class="section" id="kontakt">
+  <div class="container">
+
+    <h2>Kontakt</h2>
+
+    <div class="contact-layout">
+
+      <!-- LINKER BEREICH -->
+      <div class="contact-info">
+
+        <h3>Direkter Kontakt</h3>
+        <p>Wir sind persönlich für Sie erreichbar.</p>
+
+        <div class="contact-cards">
+
+          <div class="contact-card">
+            <div class="icon">📞</div>
+            <div>
+              <strong>Telefon</strong>
+              <span>0177 - 2929512</span>
+            </div>
+          </div>
+
+          <div class="contact-card">
+            <div class="icon">✉️</div>
+            <div>
+              <strong>E-Mail</strong>
+              <span>info@deisterblick-immobilien.de</span>
+            </div>
+          </div>
+
+          <div class="contact-card">
+            <div class="icon">📍</div>
+            <div>
+              <strong>Adresse</strong>
+              <span>Barsinghausen</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- FORMULAR -->
+      <div class="contact-form-box">
+        <form>
+
+          <input type="text" placeholder="Ihr Name" required>
+          <input type="email" placeholder="Ihre E-Mail" required>
+          <textarea placeholder="Ihre Nachricht"></textarea>
+
+          <label class="checkbox">
+            <input type="checkbox" required>
+            Datenschutz akzeptieren
+          </label>
+
+          <button>Senden</button>
+
+        </form>
+      </div>
+
+    </div>
+  </div>
+</section>
 
 <script src="script.js"></script>
 </body>
