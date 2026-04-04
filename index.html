@@ -8,13 +8,14 @@
     name="description"
     content="Deisterblick Immobilien – Verwaltung, Makler und Finanzierung. Persönliche Beratung rund um Verkauf, Bewertung und Vermarktung von Immobilien am Deister und Umgebung."
   >
+  <meta name="theme-color" content="#0f4b3a">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
   <div class="topbar">
     <div class="container topbar-inner">
-      <span>📞 0177 - 2929512</span>
+      <a href="tel:+491772929512" class="topbar-link topbar-phone">📞 0177 - 2929512</a>
       <a href="mailto:info@deisterblick-immobilien.de" class="topbar-link">✉️ info@deisterblick-immobilien.de</a>
     </div>
   </div>
@@ -22,10 +23,18 @@
   <nav class="navbar">
     <div class="container nav-container">
       <a href="#home" class="logo" aria-label="Zur Startseite">
-        <img src="assets/logo.jpg" alt="Deisterblick Immobilien Logo">
+        <img src="assets/logo.jpg" alt="Deisterblick Immobilien Logo" loading="eager" fetchpriority="high">
       </a>
 
-      <button class="menu-toggle" id="menu-toggle" aria-label="Menü öffnen" aria-expanded="false" aria-controls="nav-links">
+      <button
+        class="menu-toggle"
+        id="menu-toggle"
+        aria-label="Menü öffnen"
+        aria-expanded="false"
+        aria-controls="nav-links"
+        type="button"
+      >
+        <span class="sr-only">Menü öffnen</span>
         <span></span>
         <span></span>
         <span></span>
@@ -42,6 +51,8 @@
       </div>
     </div>
   </nav>
+
+  <div class="nav-backdrop" id="nav-backdrop" hidden></div>
 
   <header class="hero" id="home">
     <div class="hero-overlay"></div>
@@ -69,13 +80,13 @@
 
         <div class="hero-buttons hero-buttons-shifted">
           <a href="#kontakt" class="btn btn-green">Jetzt Beratung anfragen</a>
-          <a href="#bewertung" class="btn btn-green">Immobilie bewerten</a>
+          <a href="#bewertung" class="btn btn-green btn-secondary-green">Immobilie bewerten</a>
         </div>
       </div>
 
       <div class="hero-right reveal reveal-delay">
         <div class="hero-image-card">
-          <img src="assets/makler.jpg" alt="Deisterblick Immobilien">
+          <img src="assets/makler.jpg" alt="Deisterblick Immobilien" loading="lazy">
         </div>
       </div>
     </div>
@@ -153,7 +164,7 @@
 
       <div class="about-grid">
         <div class="profile-card reveal">
-          <img src="assets/mein_bild.jpg" alt="Onur Askin">
+          <img src="assets/mein_bild.jpg" alt="Onur Askin" loading="lazy">
           <div class="profile-content">
             <h3>Onur Askin</h3>
             <p class="role">Immobilienberater</p>
@@ -278,7 +289,7 @@
               <div class="contact-card-icon" aria-hidden="true">📞</div>
               <div class="contact-card-text">
                 <strong>Telefon</strong>
-                <span>0177 - 2929512</span>
+                <span><a href="tel:+491772929512" class="contact-link">0177 - 2929512</a></span>
               </div>
             </div>
 
@@ -286,7 +297,7 @@
               <div class="contact-card-icon" aria-hidden="true">✉️</div>
               <div class="contact-card-text">
                 <strong>E-Mail</strong>
-                <span>info@deisterblick-immobilien.de</span>
+                <span><a href="mailto:info@deisterblick-immobilien.de" class="contact-link">info@deisterblick-immobilien.de</a></span>
               </div>
             </div>
 
@@ -303,9 +314,9 @@
         <div class="form-box reveal reveal-delay">
           <form class="contact-form" id="contact-form">
             <div class="contact-form-grid">
-              <input type="text" name="name" placeholder="Ihr Name" required>
-              <input type="email" name="email" placeholder="Ihre E-Mail" required>
-              <input type="tel" name="phone" placeholder="Ihre Telefonnummer">
+              <input type="text" name="name" placeholder="Ihr Name" autocomplete="name" required>
+              <input type="email" name="email" placeholder="Ihre E-Mail" autocomplete="email" required>
+              <input type="tel" name="phone" placeholder="Ihre Telefonnummer" autocomplete="tel">
               <input type="text" name="subject" placeholder="Betreff">
               <textarea name="message" rows="7" placeholder="Ihre Nachricht" required></textarea>
             </div>
@@ -337,8 +348,8 @@
 
       <div>
         <h3>Kontakt</h3>
-        <p>Telefon: 0177 - 2929512</p>
-        <p>E-Mail: info@deisterblick-immobilien.de</p>
+        <p><a href="tel:+491772929512" class="footer-link">Telefon: 0177 - 2929512</a></p>
+        <p><a href="mailto:info@deisterblick-immobilien.de" class="footer-link">E-Mail: info@deisterblick-immobilien.de</a></p>
         <p>Adresse: Siedlunghöhenluft 36, 30890 Barsinghausen</p>
       </div>
 
