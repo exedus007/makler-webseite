@@ -268,24 +268,74 @@
 
       <div class="contact-layout">
         <div class="contact-info-card reveal">
-          <h3>Direkter Kontakt</h3>
-          <p>Wir beraten Sie persönlich und zuverlässig rund um Ihre Immobilie.</p>
+          <div class="contact-card-top">
+            <p class="contact-mini-title">Direkter Kontakt</p>
+            <h3>Persönlich. Schnell. Verlässlich.</h3>
+            <p class="contact-intro">
+              Ob Verkauf, Bewertung oder allgemeine Fragen rund um Ihre Immobilie –
+              wir sind gerne persönlich für Sie da.
+            </p>
+          </div>
 
-          <div class="info-box contact-details-box">
-            <p><strong>Telefon:</strong> 0177 - 2929512</p>
-            <p><strong>E-Mail:</strong> info@deisterblick-immobilien.de</p>
-            <p><strong>Adresse:</strong> Siedlunghöhenluft 36, 30890 Barsinghausen</p>
+          <div class="contact-detail-list">
+            <div class="contact-detail-item">
+              <div class="contact-icon" aria-hidden="true">📞</div>
+              <div>
+                <p class="contact-label">Telefon</p>
+                <a href="tel:01772929512" class="contact-value">0177 - 2929512</a>
+              </div>
+            </div>
+
+            <div class="contact-detail-item">
+              <div class="contact-icon" aria-hidden="true">✉️</div>
+              <div>
+                <p class="contact-label">E-Mail</p>
+                <a href="mailto:info@deisterblick-immobilien.de" class="contact-value">info@deisterblick-immobilien.de</a>
+              </div>
+            </div>
+
+            <div class="contact-detail-item">
+              <div class="contact-icon" aria-hidden="true">📍</div>
+              <div>
+                <p class="contact-label">Adresse</p>
+                <p class="contact-value">Siedlunghöhenluft 36, 30890 Barsinghausen</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="contact-note-box">
+            <strong>Hinweis:</strong>
+            Termine nach Vereinbarung. Nutzen Sie gerne das Formular, wir melden uns schnellstmöglich bei Ihnen zurück.
           </div>
         </div>
 
         <div class="form-box reveal reveal-delay">
           <form class="contact-form" id="contact-form">
             <div class="contact-form-grid">
-              <input type="text" name="name" placeholder="Ihr Name" required>
-              <input type="email" name="email" placeholder="Ihre E-Mail" required>
-              <input type="tel" name="phone" placeholder="Ihre Telefonnummer">
-              <input type="text" name="subject" placeholder="Betreff">
-              <textarea name="message" rows="7" placeholder="Ihre Nachricht" required></textarea>
+              <div class="field-group">
+                <label for="name">Ihr Name</label>
+                <input id="name" type="text" name="name" placeholder="Max Mustermann" required>
+              </div>
+
+              <div class="field-group">
+                <label for="email">Ihre E-Mail</label>
+                <input id="email" type="email" name="email" placeholder="name@example.de" required>
+              </div>
+
+              <div class="field-group">
+                <label for="phone">Ihre Telefonnummer</label>
+                <input id="phone" type="tel" name="phone" placeholder="Optional">
+              </div>
+
+              <div class="field-group">
+                <label for="subject">Betreff</label>
+                <input id="subject" type="text" name="subject" placeholder="Worum geht es?">
+              </div>
+
+              <div class="field-group field-group-full">
+                <label for="message">Ihre Nachricht</label>
+                <textarea id="message" name="message" rows="7" placeholder="Schreiben Sie uns Ihr Anliegen..." required></textarea>
+              </div>
             </div>
 
             <label class="checkbox-wrap">
