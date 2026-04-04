@@ -106,7 +106,7 @@ textarea:focus-visible {
   align-items: center;
   justify-content: space-between;
   gap: 24px;
-  min-height: 134px;
+  min-height: 142px;
 }
 
 .logo {
@@ -118,8 +118,10 @@ textarea:focus-visible {
 .logo img {
   height: 132px;
   width: auto;
-  max-width: 340px;
+  max-width: 430px;
   object-fit: contain;
+  transform: scaleX(1.12);
+  transform-origin: left center;
 }
 
 .nav-links {
@@ -194,10 +196,6 @@ textarea:focus-visible {
   color: #12392d;
   letter-spacing: -0.02em;
   overflow-wrap: anywhere;
-}
-
-.hero-title-line {
-  display: block;
 }
 
 .hero-text {
@@ -1307,7 +1305,7 @@ textarea:focus-visible {
   }
 
   .nav-container {
-    min-height: 100px;
+    min-height: 108px;
     gap: 12px;
   }
 
@@ -1453,8 +1451,9 @@ textarea:focus-visible {
   }
 
   .logo img {
-    height: 96px;
-    max-width: 260px;
+    height: 104px;
+    max-width: 300px;
+    transform: scaleX(1.08);
   }
 
   .checkbox-wrap {
@@ -1504,12 +1503,13 @@ textarea:focus-visible {
   }
 
   .logo img {
-    height: 82px;
-    max-width: 220px;
+    height: 92px;
+    max-width: 250px;
+    transform: scaleX(1.04);
   }
 
   .nav-container {
-    min-height: 88px;
+    min-height: 92px;
   }
 
   .object-modal-nav {
