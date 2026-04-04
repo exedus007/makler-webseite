@@ -1,426 +1,1420 @@
-const projectId = "lya1es34";
-const dataset = "production";
-const formspreeEndpoint = "https://formspree.io/f/DEINE_FORMSPREE_ID";
-
-let objekteListe = [];
-let aktuellerObjektIndex = 0;
-
-function escapeHtml(value) {
-  return String(value ?? "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+* {
+  box-sizing: border-box;
 }
 
-function bildUrlAusRef(ref) {
-  if (!ref) return "";
-  const parts = ref.split("-");
-  const id = parts[1];
-  const dimensions = parts[2];
-  const format = parts[3];
-
-  if (!id || !dimensions || !format) return "";
-  return `https://cdn.sanity.io/images/${projectId}/${dataset}/${id}-${dimensions}.${format}`;
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
-function exposeUrlAusRef(ref) {
-  if (!ref) return "";
-  const parts = ref.split("-");
-  const id = parts[1];
-  const format = parts[2];
-
-  if (!id || !format) return "";
-  return `https://cdn.sanity.io/files/${projectId}/${dataset}/${id}.${format}`;
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f7f5f1;
+  color: #1e1e1e;
+  line-height: 1.6;
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100%;
 }
 
-function statusText(status) {
-  if (status === "reserviert") return "Reserviert";
-  if (status === "verkauft") return "Verkauft";
-  return "Verfügbar";
+body.modal-open {
+  overflow: hidden;
 }
 
-function statusBadgeClass(status) {
-  if (status === "reserviert") return "object-status-reserviert";
-  if (status === "verkauft") return "object-status-verkauft";
-  return "object-status-verfuegbar";
+img {
+  max-width: 100%;
+  display: block;
 }
 
-/* Menü */
-const menuToggle = document.getElementById("menu-toggle");
-const navLinks = document.getElementById("nav-links");
+a {
+  text-decoration: none;
+}
 
-if (menuToggle && navLinks) {
-  menuToggle.addEventListener("click", () => {
-    navLinks.classList.toggle("open");
-    const expanded = menuToggle.getAttribute("aria-expanded") === "true";
-    menuToggle.setAttribute("aria-expanded", String(!expanded));
-  });
+.container {
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto;
+  max-width: 100%;
+}
 
-  navLinks.querySelectorAll("a").forEach((link) => {
-    link.addEventListener("click", () => {
-      navLinks.classList.remove("open");
-      menuToggle.setAttribute("aria-expanded", "false");
-    });
-  });
+.hero,
+.section,
+.footer,
+.navbar,
+.topbar {
+  overflow-x: clip;
+}
+
+.hero-left,
+.hero-right,
+.section-head,
+.split-grid > *,
+.about-objects-grid > *,
+.contact-layout > *,
+.footer-grid > *,
+.cards-grid > *,
+.object-modal-layout > * {
+  min-width: 0;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid #9dd6be;
+  outline-offset: 3px;
+}
+
+/* Topbar */
+.topbar {
+  background: #0f4b3a;
+  color: #fff;
+  font-size: 14px;
+}
+
+.topbar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 0;
+  flex-wrap: wrap;
+}
+
+.topbar-link {
+  color: #fff;
+  overflow-wrap: anywhere;
+}
+
+.topbar-link:hover {
+  text-decoration: underline;
+}
+
+/* Navbar */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid #ece8df;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.03);
+}
+
+.nav-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  min-height: 134px;
+}
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.logo img {
+  height: 132px;
+  width: auto;
+  max-width: 340px;
+  object-fit: contain;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.nav-links a {
+  color: #1f2b27;
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.nav-links a:hover {
+  color: #0f4b3a;
+}
+
+.menu-toggle {
+  display: none;
+  width: 46px;
+  height: 46px;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+
+.menu-toggle span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: #0f4b3a;
+  margin: 5px auto;
+  transition: 0.2s ease;
+}
+
+/* Hero */
+.hero {
+  position: relative;
+  overflow: hidden;
+  padding: 80px 0 88px;
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.16), transparent 30%),
+    linear-gradient(135deg, #efe8db 0%, #f8f4ec 48%, #f0eadf 100%);
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(15, 75, 58, 0.08) 0%, rgba(15, 75, 58, 0.00) 45%, rgba(255, 255, 255, 0.00) 100%);
+  pointer-events: none;
+}
+
+.hero-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.16fr) minmax(260px, 0.84fr);
+  align-items: start;
+  gap: 86px;
+}
+
+.hero-left h1 {
+  font-size: clamp(42px, 5.1vw, 72px);
+  line-height: 1.03;
+  margin: 0 0 22px;
+  color: #0f4b3a;
+  letter-spacing: -0.03em;
+  word-break: normal;
+  overflow-wrap: normal;
+  hyphens: none;
+  max-width: 760px;
+}
+
+.hero-text {
+  font-size: 17px;
+  color: #3f4844;
+  margin: 0 0 30px;
+  max-width: 690px;
+  line-height: 1.7;
+}
+
+.eyebrow {
+  display: inline-block;
+  margin-bottom: 18px;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 800;
+  color: #0f4b3a;
+}
+
+.eyebrow-light {
+  color: #d7efe6;
+}
+
+.hero-tags {
+  display: grid;
+  grid-template-columns: repeat(3, max-content);
+  gap: 14px 16px;
+  margin: 0 0 34px;
+  align-items: start;
+}
+
+.hero-tags-showcase span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 10px 20px;
+  border-radius: 999px;
+  background: #f9fbfc;
+  color: #0f4b3a;
+  font-size: 14px;
+  font-weight: 700;
+  border: 1px solid #e6ece8;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  text-align: center;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+.hero-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+}
+
+.hero-buttons-shifted {
+  padding-left: 64px;
+}
+
+.hero-buttons-shifted .btn {
+  min-width: 220px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 56px;
+  padding: 0 26px;
+  border-radius: 16px;
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: 0.01em;
+  transition: all 0.2s ease;
+  max-width: 100%;
+  text-align: center;
+}
+
+.btn-green {
+  background: #0f6b4f;
+  color: #fff;
+  box-shadow: 0 14px 30px rgba(15, 107, 79, 0.22);
+}
+
+.btn-green:hover {
+  background: #0c5a43;
+  transform: translateY(-2px);
+  box-shadow: 0 18px 34px rgba(15, 107, 79, 0.28);
+}
+
+.hero-image-card {
+  position: relative;
+  overflow: hidden;
+  background: #ddd;
+}
+
+.hero-image-card-small {
+  width: 100%;
+  max-width: 420px;
+  height: 610px;
+  margin-left: auto;
+  margin-right: 26px;
+  border-radius: 30px;
+  box-shadow: 0 24px 54px rgba(0, 0, 0, 0.14);
+}
+
+.hero-image-card-small img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Sections */
+.section {
+  padding: 82px 0;
+}
+
+.section-soft {
+  background: #f3eee6;
+}
+
+.section-dark {
+  background: #143f33;
+  color: #fff;
+}
+
+.section-head {
+  margin-bottom: 28px;
+}
+
+.section-head h2 {
+  margin: 0 0 12px;
+  font-size: clamp(28px, 4vw, 44px);
+  line-height: 1.15;
+  color: inherit;
+  overflow-wrap: anywhere;
+}
+
+.section-text {
+  margin: 0;
+  color: #5f6662;
+  max-width: 760px;
+}
+
+.section-text-light {
+  color: rgba(255, 255, 255, 0.88);
+}
+
+/* Split */
+.split-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 28px;
+  align-items: center;
+}
+
+.dark-box {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+
+.info-box {
+  background: #fff;
+  padding: 28px;
+  border-radius: 22px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.05);
+  max-width: 100%;
+}
+
+.check-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 24px;
+}
+
+.check-list li {
+  position: relative;
+  padding-left: 26px;
+  margin: 10px 0;
+}
+
+.check-list li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: #9dd6be;
+  font-weight: 800;
+}
+
+/* Cards */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+}
+
+.card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.05);
+}
+
+.card h3 {
+  margin-top: 0;
+  color: #12392d;
+  overflow-wrap: anywhere;
+}
+
+/* About + objects */
+.about-objects-grid {
+  display: grid;
+  grid-template-columns: 0.84fr 1.16fr;
+  gap: 28px;
+  align-items: center;
+}
+
+.about-only-grid {
+  grid-template-columns: 0.84fr 1.16fr;
+}
+
+.profile-card,
+.objects-card {
+  background: #fff;
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06);
+  max-width: 100%;
+}
+
+.profile-card {
+  max-width: 390px;
+  margin: 0 auto 0 0;
+}
+
+.profile-card img {
+  width: 100%;
+  height: 245px;
+  object-fit: cover;
+  object-position: center top;
+}
+
+.profile-content,
+.objects-card {
+  padding: 24px;
+}
+
+.profile-content h3,
+.objects-card h3 {
+  margin-top: 0;
+  color: #12392d;
+}
+
+.role {
+  color: #0f4b3a;
+  font-weight: 700;
+}
+
+.objects-dynamic-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 10px;
+  min-width: 0;
+}
+
+.object-item {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 14px;
+  align-items: center;
+  width: 100%;
+  max-width: 100%;
+  border: none;
+  background: #f6f7f5;
+  border-radius: 16px;
+  padding: 10px;
+  cursor: pointer;
+  text-align: left;
+  transition: 0.2s ease;
+}
+
+.object-item:hover {
+  background: #eef3ef;
+  transform: translateY(-2px);
+}
+
+.object-item img {
+  width: 110px;
+  height: 84px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.object-text {
+  min-width: 0;
+}
+
+.object-text strong {
+  display: block;
+  margin-bottom: 4px;
+  color: #12392d;
+  font-size: 17px;
+  overflow-wrap: anywhere;
+}
+
+.object-text p {
+  margin: 0;
+  color: #5b625e;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+
+.object-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  width: fit-content;
+  max-width: 100%;
+}
+
+.object-status-verfuegbar {
+  background: #e7f3ee;
+  color: #0f4b3a;
+}
+
+.object-status-reserviert {
+  background: #fff3cd;
+  color: #8a6d00;
+}
+
+.object-status-verkauft {
+  background: #e6e6e6;
+  color: #444;
+}
+
+.objects-empty {
+  padding: 16px 0;
+  color: #666;
 }
 
 /* FAQ */
-document.querySelectorAll(".faq-question").forEach((btn) => {
-  btn.addEventListener("click", () => {
-    const item = btn.closest(".faq-item");
-    const expanded = btn.getAttribute("aria-expanded") === "true";
+.faq-container {
+  max-width: 900px;
+}
 
-    btn.setAttribute("aria-expanded", String(!expanded));
-    item.classList.toggle("open");
-  });
-});
+.faq-item {
+  background: #fff;
+  border-radius: 18px;
+  margin-bottom: 14px;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
 
-/* Reveal */
-const revealElements = document.querySelectorAll(".reveal");
+.faq-question {
+  width: 100%;
+  border: none;
+  background: #fff;
+  cursor: pointer;
+  padding: 20px 22px;
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: center;
+  text-align: left;
+  font-size: 17px;
+  font-weight: 700;
+  color: #12392d;
+}
 
-if ("IntersectionObserver" in window && revealElements.length) {
-  const revealObserver = new IntersectionObserver((entries, observer) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add("revealed");
-        observer.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.12 });
+.faq-icon {
+  transition: 0.2s ease;
+  flex: 0 0 auto;
+}
 
-  revealElements.forEach((el) => revealObserver.observe(el));
-} else {
-  revealElements.forEach((el) => el.classList.add("revealed"));
+.faq-item.open .faq-icon {
+  transform: rotate(180deg);
+}
+
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: 0.25s ease;
+}
+
+.faq-item.open .faq-answer {
+  max-height: 400px;
+}
+
+.faq-answer p {
+  padding: 0 22px 20px;
+  margin: 0;
+  color: #5d645f;
+}
+
+/* Contact */
+.contact-layout {
+  display: grid;
+  grid-template-columns: 0.95fr 1.05fr;
+  gap: 28px;
+  align-items: stretch;
+}
+
+.contact-info-card,
+.form-box {
+  background: #fff;
+  border-radius: 24px;
+  padding: 32px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.07);
+}
+
+.contact-info-card {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbf9 100%);
+  border: 1px solid #e5eee9;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.contact-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 8px;
+}
+
+.contact-card-item {
+  display: grid;
+  grid-template-columns: 54px 1fr;
+  gap: 14px;
+  align-items: center;
+  padding: 16px 18px;
+  border-radius: 18px;
+  background: #ffffff;
+  border: 1px solid #e6ece8;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.05);
+}
+
+.contact-card-icon {
+  width: 54px;
+  height: 54px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  background: #eef5f1;
+  font-size: 24px;
+}
+
+.contact-card-text strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 14px;
+  color: #0f4b3a;
+}
+
+.contact-card-text span {
+  display: block;
+  color: #47504c;
+  line-height: 1.5;
+}
+
+.form-box {
+  border: 1px solid #e8ece9;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.contact-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.contact-form-grid textarea {
+  grid-column: 1 / -1;
+}
+
+.contact-form input,
+.contact-form textarea {
+  width: 100%;
+  border: 1px solid #d8ddd9;
+  border-radius: 14px;
+  padding: 15px 16px;
+  font: inherit;
+  background: #fff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.contact-form textarea {
+  min-height: 180px;
+  resize: vertical;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus,
+.object-form-group input:focus,
+.object-form-group textarea:focus {
+  border-color: #0f4b3a;
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(15, 75, 58, 0.10);
+}
+
+.checkbox-wrap {
+  display: grid;
+  grid-template-columns: 20px 1fr;
+  gap: 12px;
+  align-items: start;
+  width: 100%;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #5d645f;
+  cursor: pointer;
+}
+
+.checkbox-wrap input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin: 3px 0 0 0;
+}
+
+.checkbox-wrap span {
+  display: block;
+  min-width: 0;
+  text-align: left;
+}
+
+.checkbox-wrap a {
+  color: #0f4b3a;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.checkbox-wrap a:hover {
+  color: #0c3d2f;
+}
+
+.submit-btn {
+  align-self: flex-start;
+  min-height: 54px;
+  border: none;
+  border-radius: 14px;
+  background: #0f4b3a;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0 26px;
+  transition: 0.2s ease;
+  box-shadow: 0 12px 26px rgba(15, 75, 58, 0.18);
+}
+
+.submit-btn:hover {
+  background: #0c3d2f;
+  transform: translateY(-1px);
+}
+
+.submit-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Footer */
+.footer {
+  background: #0f4b3a;
+  color: #fff;
+  padding: 42px 0;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 22px;
+}
+
+.footer h3 {
+  margin-top: 0;
+}
+
+.footer a {
+  color: #fff;
+}
+
+.footer a:hover {
+  text-decoration: underline;
 }
 
 /* Scroll top */
-const scrollTopBtn = document.getElementById("scroll-top-btn");
-
-window.addEventListener("scroll", () => {
-  if (!scrollTopBtn) return;
-
-  if (window.scrollY > 500) {
-    scrollTopBtn.classList.add("show");
-  } else {
-    scrollTopBtn.classList.remove("show");
-  }
-});
-
-if (scrollTopBtn) {
-  scrollTopBtn.addEventListener("click", () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  });
+.scroll-top-btn {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 1001;
+  display: none;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  border-radius: 999px;
+  background: #0f4b3a;
+  color: #fff;
+  padding: 12px 16px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.18);
+  max-width: calc(100vw - 24px);
 }
 
-/* Kontaktformular Hauptformular */
-const contactForm = document.getElementById("contact-form");
-
-if (contactForm) {
-  contactForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    const privacy = contactForm.querySelector('input[name="privacy"]');
-    if (privacy && !privacy.checked) {
-      alert("Bitte bestätigen Sie die Datenschutzhinweise.");
-      return;
-    }
-
-    if (formspreeEndpoint.includes("DEINE_FORMSPREE_ID")) {
-      alert("Bitte tragen Sie zuerst Ihre echte Formspree-ID in der script.js ein.");
-      return;
-    }
-
-    const submitButton = contactForm.querySelector(".submit-btn");
-    const originalButtonText = submitButton ? submitButton.textContent : "";
-
-    if (submitButton) {
-      submitButton.disabled = true;
-      submitButton.textContent = "Wird gesendet...";
-    }
-
-    try {
-      const formData = new FormData(contactForm);
-
-      const response = await fetch(formspreeEndpoint, {
-        method: "POST",
-        body: formData,
-        headers: {
-          Accept: "application/json"
-        }
-      });
-
-      if (response.ok) {
-        alert("Vielen Dank! Ihre Anfrage wurde erfolgreich gesendet.");
-        contactForm.reset();
-      } else {
-        alert("Beim Senden ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.");
-      }
-    } catch (error) {
-      console.error("Fehler beim Senden des Hauptformulars:", error);
-      alert("Beim Senden ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.");
-    } finally {
-      if (submitButton) {
-        submitButton.disabled = false;
-        submitButton.textContent = originalButtonText;
-      }
-    }
-  });
-}
-
-/* Objekte laden */
-async function ladeObjekte() {
-  const container = document.getElementById("objekte-container");
-  if (!container) return;
-
-  try {
-    const query = encodeURIComponent(`
-      *[_type=="immobilie"] | order(_createdAt desc){
-        _id,
-        titel,
-        ort,
-        preis,
-        wohnflaeche,
-        zimmer,
-        status,
-        beschreibung,
-        bild,
-        expose
-      }
-    `);
-
-    const url = `https://${projectId}.api.sanity.io/v2023-01-01/data/query/${dataset}?query=${query}`;
-    const res = await fetch(url);
-
-    if (!res.ok) {
-      throw new Error(\`HTTP-Fehler: \${res.status}\`);
-    }
-
-    const data = await res.json();
-    objekteListe = (data.result || []).filter((obj) => obj.status !== "verkauft");
-
-    if (objekteListe.length === 0) {
-      container.innerHTML = '<p class="objects-empty">Aktuell sind keine verfügbaren oder reservierten Objekte vorhanden.</p>';
-      return;
-    }
-
-    container.innerHTML = "";
-
-    objekteListe.forEach((objekt, index) => {
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = "object-item";
-
-      const titel = escapeHtml(objekt.titel || "Objekt");
-      const wohnflaeche = escapeHtml(objekt.wohnflaeche || "");
-      const ort = escapeHtml(objekt.ort || "");
-      const bildUrl = objekt?.bild?.asset?._ref ? bildUrlAusRef(objekt.bild.asset._ref) : "assets/makler.jpg";
-
-      button.innerHTML = `
-        <img src="${bildUrl}" alt="${titel}">
-        <div class="object-text">
-          <strong>${titel}</strong>
-          <p>${wohnflaeche} ${wohnflaeche && ort ? "·" : ""} ${ort}</p>
-          <span class="object-status-badge ${statusBadgeClass(objekt.status)}">${statusText(objekt.status)}</span>
-        </div>
-      `;
-
-      button.addEventListener("click", () => {
-        aktuellerObjektIndex = index;
-        zeigeObjektModal(index);
-      });
-
-      container.appendChild(button);
-    });
-  } catch (error) {
-    console.error("Fehler beim Laden der Objekte:", error);
-    container.innerHTML = '<p class="objects-empty">Fehler beim Laden der Objekte.</p>';
-  }
+.scroll-top-btn.show {
+  display: inline-flex;
 }
 
 /* Modal */
-const objectModal = document.getElementById("object-modal");
-const objectModalContent = document.getElementById("object-modal-content");
-const objectModalTitle = document.getElementById("object-modal-title");
-const closeObjectModal = document.getElementById("close-object-modal");
-const prevObjectModal = document.getElementById("object-modal-prev");
-const nextObjectModal = document.getElementById("object-modal-next");
-
-function zeigeObjektModal(index) {
-  const obj = objekteListe[index];
-  if (!obj || !objectModal || !objectModalContent || !objectModalTitle) return;
-
-  const titel = escapeHtml(obj.titel || "Objekt");
-  const ort = escapeHtml(obj.ort || "");
-  const preis = escapeHtml(obj.preis || "");
-  const wohnflaeche = escapeHtml(obj.wohnflaeche || "");
-  const zimmer = escapeHtml(obj.zimmer || "");
-  const beschreibung = escapeHtml(obj.beschreibung || "");
-  const objektId = escapeHtml(obj._id || "");
-  const status = statusText(obj.status);
-
-  objectModalTitle.textContent = obj.titel || "Objekt";
-
-  const bildUrl = obj?.bild?.asset?._ref ? bildUrlAusRef(obj.bild.asset._ref) : "assets/makler.jpg";
-  const exposeUrl = obj?.expose?.asset?._ref ? exposeUrlAusRef(obj.expose.asset._ref) : "";
-
-  objectModalContent.innerHTML = `
-    <div class="object-modal-layout">
-      <div class="object-modal-visual">
-        <img src="${bildUrl}" alt="${titel}" class="object-modal-image">
-      </div>
-
-      <div class="object-modal-info">
-        <h4>${titel}</h4>
-
-        <div class="object-modal-meta">
-          <div class="object-modal-meta-item">
-            <strong>Ort</strong>
-            <span>${ort}</span>
-          </div>
-          <div class="object-modal-meta-item">
-            <strong>Preis</strong>
-            <span>${preis}</span>
-          </div>
-          <div class="object-modal-meta-item">
-            <strong>Wohnfläche</strong>
-            <span>${wohnflaeche}</span>
-          </div>
-          <div class="object-modal-meta-item">
-            <strong>Zimmer</strong>
-            <span>${zimmer}</span>
-          </div>
-        </div>
-
-        <div class="object-modal-description">${beschreibung}</div>
-
-        <span class="object-status-badge ${statusBadgeClass(obj.status)}">${status}</span>
-        <div class="object-modal-id">Objekt-ID: ${objektId}</div>
-
-        <div class="object-modal-actions">
-          ${
-            exposeUrl
-              ? `<a class="object-action-btn secondary" href="${exposeUrl}" target="_blank" rel="noopener noreferrer">Exposé ansehen</a>`
-              : ``
-          }
-          ${
-            exposeUrl
-              ? `<a class="object-action-btn outline" href="${exposeUrl}" download>Exposé herunterladen</a>`
-              : ``
-          }
-        </div>
-
-        <form class="object-inquiry-form" action="${formspreeEndpoint}" method="POST">
-          <h5>Anfrage senden</h5>
-
-          <input type="hidden" name="objekt_id" value="${objektId}">
-          <input type="hidden" name="objekt_titel" value="${titel}">
-          <input type="hidden" name="objekt_ort" value="${ort}">
-          <input type="hidden" name="objekt_preis" value="${preis}">
-          <input type="hidden" name="objekt_status" value="${escapeHtml(status)}">
-          <input type="hidden" name="_subject" value="Neue Objektanfrage: ${titel} | ID: ${objektId}">
-
-          <div class="object-form-grid">
-            <div class="object-form-group">
-              <label for="object-name">Name</label>
-              <input id="object-name" type="text" name="name" required>
-            </div>
-
-            <div class="object-form-group">
-              <label for="object-email">E-Mail</label>
-              <input id="object-email" type="email" name="email" required>
-            </div>
-
-            <div class="object-form-group">
-              <label for="object-phone">Telefon</label>
-              <input id="object-phone" type="text" name="telefon">
-            </div>
-
-            <div class="object-form-group">
-              <label for="object-betreff">Betreff</label>
-              <input id="object-betreff" type="text" name="betreff" value="Anfrage zu ${titel}">
-            </div>
-
-            <div class="object-form-group full">
-              <label for="object-message">Nachricht</label>
-              <textarea id="object-message" name="message" required>Guten Tag,
-
-ich interessiere mich für folgendes Objekt:
-
-Titel: ${obj.titel || ""}
-Ort: ${obj.ort || ""}
-Preis: ${obj.preis || ""}
-Status: ${status}
-Objekt-ID: ${obj._id || ""}
-
-Bitte kontaktieren Sie mich.
-
-Vielen Dank.</textarea>
-            </div>
-          </div>
-
-          <div class="object-form-note">
-            Die Objekt-ID und die wichtigsten Objektdaten werden automatisch mitgesendet, damit Ihre Anfrage sofort dem richtigen Objekt zugeordnet werden kann.
-          </div>
-
-          <button type="submit" class="object-action-btn primary">Anfrage direkt senden</button>
-        </form>
-      </div>
-    </div>
-  `;
-
-  objectModal.classList.add("open");
-  objectModal.setAttribute("aria-hidden", "false");
-  document.body.classList.add("modal-open");
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
 }
 
-function schliesseObjektModal() {
-  if (!objectModal) return;
-
-  objectModal.classList.remove("open");
-  objectModal.setAttribute("aria-hidden", "true");
-  document.body.classList.remove("modal-open");
+.modal-overlay.open {
+  display: flex;
 }
 
-function vorherigesObjekt() {
-  if (!objekteListe.length) return;
-  aktuellerObjektIndex = (aktuellerObjektIndex - 1 + objekteListe.length) % objekteListe.length;
-  zeigeObjektModal(aktuellerObjektIndex);
+.modal-box {
+  background: #fff;
+  border-radius: 24px;
+  width: 100%;
+  max-width: 100%;
+  max-height: 92vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.35);
 }
 
-function naechstesObjekt() {
-  if (!objekteListe.length) return;
-  aktuellerObjektIndex = (aktuellerObjektIndex + 1) % objekteListe.length;
-  zeigeObjektModal(aktuellerObjektIndex);
+.object-modal-box {
+  max-width: 980px;
+  position: relative;
 }
 
-if (closeObjectModal) {
-  closeObjectModal.addEventListener("click", schliesseObjektModal);
+.modal-header {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 22px;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid #ececec;
 }
 
-if (prevObjectModal) {
-  prevObjectModal.addEventListener("click", vorherigesObjekt);
+.modal-header h3 {
+  margin: 0;
+  color: #12392d;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
-if (nextObjectModal) {
-  nextObjectModal.addEventListener("click", naechstesObjekt);
+.modal-close {
+  width: 42px;
+  height: 42px;
+  border: none;
+  border-radius: 50%;
+  background: #113f32;
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  flex: 0 0 auto;
 }
 
-if (objectModal) {
-  objectModal.addEventListener("click", (e) => {
-    if (e.target === objectModal) {
-      schliesseObjektModal();
-    }
-  });
+.modal-content {
+  padding: 0;
+  overflow-x: hidden;
 }
 
-document.addEventListener("keydown", (e) => {
-  if (!objectModal || !objectModal.classList.contains("open")) return;
+.object-modal-layout {
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  gap: 0;
+}
 
-  if (e.key === "Escape") schliesseObjektModal();
-  if (e.key === "ArrowLeft") vorherigesObjekt();
-  if (e.key === "ArrowRight") naechstesObjekt();
-});
+.object-modal-visual {
+  background: #e8e8e8;
+  min-height: 420px;
+  position: relative;
+  min-width: 0;
+}
 
-ladeObjekte();
+.object-modal-image {
+  width: 100%;
+  height: 100%;
+  min-height: 420px;
+  object-fit: cover;
+  display: block;
+}
+
+.object-modal-info {
+  padding: 28px;
+  background: #fff;
+  min-width: 0;
+}
+
+.object-modal-info h4 {
+  margin: 0 0 18px 0;
+  font-size: 28px;
+  color: #0f4b3a;
+  overflow-wrap: anywhere;
+}
+
+.object-modal-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.object-modal-meta-item {
+  background: #f7f7f7;
+  border-radius: 12px;
+  padding: 12px 14px;
+  min-width: 0;
+}
+
+.object-modal-meta-item strong {
+  display: block;
+  font-size: 13px;
+  color: #0f4b3a;
+  margin-bottom: 4px;
+}
+
+.object-modal-meta-item span {
+  font-size: 16px;
+  color: #222;
+  overflow-wrap: anywhere;
+}
+
+.object-modal-description {
+  margin: 18px 0;
+  color: #444;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+  white-space: pre-line;
+}
+
+.object-modal-id {
+  margin-top: 10px;
+  font-size: 13px;
+  color: #666;
+  word-break: break-word;
+}
+
+.object-modal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.object-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 12px 18px;
+  border-radius: 10px;
+  font-weight: 700;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s ease;
+  max-width: 100%;
+  text-align: center;
+}
+
+.object-action-btn.primary {
+  background: #0f4b3a;
+  color: #fff;
+}
+
+.object-action-btn.primary:hover {
+  background: #0c3d2f;
+}
+
+.object-action-btn.secondary {
+  background: #eef4f1;
+  color: #0f4b3a;
+  border: 1px solid #d9e6df;
+}
+
+.object-action-btn.secondary:hover {
+  background: #e3eee9;
+}
+
+.object-action-btn.outline {
+  background: #fff;
+  color: #0f4b3a;
+  border: 2px solid #0f4b3a;
+}
+
+.object-action-btn.outline:hover {
+  background: #f3f8f5;
+}
+
+.object-inquiry-form {
+  margin-top: 18px;
+  background: #f8fbf9;
+  border: 1px solid #e1ebe5;
+  border-radius: 16px;
+  padding: 18px;
+  max-width: 100%;
+}
+
+.object-inquiry-form h5 {
+  margin: 0 0 14px 0;
+  font-size: 20px;
+  color: #0f4b3a;
+  overflow-wrap: anywhere;
+}
+
+.object-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.object-form-group {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.object-form-group.full {
+  grid-column: 1 / -1;
+}
+
+.object-form-group label {
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f4b3a;
+}
+
+.object-form-group input,
+.object-form-group textarea {
+  width: 100%;
+  max-width: 100%;
+  border: 1px solid #cfdad4;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 15px;
+  font-family: inherit;
+  background: #fff;
+}
+
+.object-form-group textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.object-form-note {
+  margin-top: 12px;
+  font-size: 12px;
+  color: #666;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.object-modal-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(15, 75, 58, 0.92);
+  color: #fff;
+  font-size: 26px;
+  cursor: pointer;
+  z-index: 4;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.object-modal-prev {
+  left: 14px;
+}
+
+.object-modal-next {
+  right: 14px;
+}
+
+/* Reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition: 0.5s ease;
+}
+
+.reveal-delay {
+  transition-delay: 0.12s;
+}
+
+.reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Responsive */
+@media (max-width: 1180px) {
+  .hero-tags {
+    grid-template-columns: repeat(2, max-content);
+  }
+}
+
+@media (max-width: 1100px) {
+  .cards-grid,
+  .footer-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .hero-grid,
+  .split-grid,
+  .about-objects-grid,
+  .contact-layout,
+  .about-only-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-image-card-small {
+    height: 560px;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  .hero-buttons-shifted {
+    padding-left: 0;
+  }
+
+  .profile-card {
+    max-width: 390px;
+    margin: 0;
+  }
+}
+
+@media (max-width: 900px) {
+  .object-modal-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .object-modal-image,
+  .object-modal-visual {
+    min-height: 260px;
+  }
+
+  .object-modal-meta,
+  .object-form-grid,
+  .contact-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .object-modal-nav {
+    top: 160px;
+  }
+
+  .hero-tags {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .hero-tags-showcase span {
+    white-space: normal;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    width: min(100% - 20px, 1180px);
+  }
+
+  .topbar {
+    font-size: 13px;
+  }
+
+  .topbar-inner {
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 6px;
+    flex-direction: column;
+    padding: 8px 0;
+  }
+
+  .menu-toggle {
+    display: inline-block;
+  }
+
+  .nav-container {
+    min-height: 100px;
+    gap: 12px;
+  }
+
+  .nav-links {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    width: 100%;
+    background: #fff;
+    border-bottom: 1px solid #ece8df;
+    display: none;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 18px 16px;
+    gap: 14px;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06);
+  }
+
+  .nav-links.open {
+    display: flex;
+  }
+
+  .cards-grid,
+  .footer-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .section {
+    padding: 60px 0;
+  }
+
+  .hero {
+    padding: 46px 0 58px;
+  }
+
+  .hero-left h1 {
+    font-size: 42px;
+    line-height: 1.07;
+  }
+
+  .hero-text {
+    font-size: 16px;
+  }
+
+  .hero-tags {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-buttons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .hero-buttons-shifted {
+    padding-left: 0;
+  }
+
+  .hero-buttons-shifted .btn {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .hero-image-card-small {
+    height: 430px;
+    max-width: 100%;
+    border-radius: 24px;
+    margin-right: 0;
+  }
+
+  .contact-info-card,
+  .form-box,
+  .info-box,
+  .card,
+  .objects-card,
+  .object-modal-info,
+  .object-inquiry-form {
+    padding: 22px 20px;
+  }
+
+  .contact-card-item {
+    grid-template-columns: 48px 1fr;
+    padding: 14px;
+  }
+
+  .contact-card-icon {
+    width: 48px;
+    height: 48px;
+    font-size: 22px;
+  }
+
+  .scroll-top-btn {
+    right: 12px;
+    bottom: 12px;
+    padding: 12px 14px;
+  }
+
+  .scroll-top-text {
+    display: none;
+  }
+
+  .object-item {
+    grid-template-columns: 88px 1fr;
+    gap: 12px;
+  }
+
+  .object-item img {
+    width: 88px;
+    height: 76px;
+  }
+
+  .modal-overlay {
+    padding: 10px;
+  }
+
+  .modal-header {
+    padding: 14px 16px;
+  }
+
+  .object-modal-info {
+    padding: 20px;
+  }
+
+  .object-modal-actions {
+    flex-direction: column;
+  }
+
+  .object-action-btn {
+    width: 100%;
+  }
+
+  .logo img {
+    height: 96px;
+    max-width: 260px;
+  }
+
+  .checkbox-wrap {
+    font-size: 13px;
+  }
+
+  .submit-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .profile-card {
+    max-width: 100%;
+  }
+
+  .profile-card img {
+    height: 220px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    width: min(100% - 16px, 1180px);
+  }
+
+  .hero-left h1 {
+    font-size: 34px;
+  }
+
+  .section-head h2 {
+    font-size: 28px;
+  }
+
+  .logo img {
+    height: 82px;
+    max-width: 220px;
+  }
+
+  .nav-container {
+    min-height: 88px;
+  }
+
+  .object-modal-nav {
+    display: none;
+  }
+
+  .contact-info-card,
+  .form-box,
+  .info-box,
+  .card,
+  .objects-card {
+    border-radius: 18px;
+  }
+
+  .submit-btn,
+  .btn,
+  .object-action-btn {
+    min-height: 48px;
+  }
+
+  .hero-image-card-small {
+    height: 360px;
+  }
+
+  .profile-card img {
+    height: 190px;
+  }
+}
