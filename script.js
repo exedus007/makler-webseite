@@ -16,23 +16,22 @@ function escapeHtml(value) {
 }
 
 function bildUrlAusRef(ref) {
-  if (!ref) return "";
-  const parts = ref.split("-");
-  const id = parts[1];
-  const dimensions = parts[2];
-  const format = parts[3];
+  if (!ref || typeof ref !== "string") return "";
 
-  if (!id || !dimensions || !format) return "";
+  const match = ref.match(/^image-([a-zA-Z0-9]+)-(\d+x\d+)-([a-z0-9]+)$/);
+  if (!match) return "";
+
+  const [, id, dimensions, format] = match;
   return `https://cdn.sanity.io/images/${projectId}/${dataset}/${id}-${dimensions}.${format}`;
 }
 
 function exposeUrlAusRef(ref) {
-  if (!ref) return "";
-  const parts = ref.split("-");
-  const id = parts[1];
-  const format = parts[2];
+  if (!ref || typeof ref !== "string") return "";
 
-  if (!id || !format) return "";
+  const match = ref.match(/^file-([a-zA-Z0-9]+)-([a-z0-9]+)$/);
+  if (!match) return "";
+
+  const [, id, format] = match;
   return `https://cdn.sanity.io/files/${projectId}/${dataset}/${id}.${format}`;
 }
 
@@ -258,7 +257,12 @@ async function ladeObjekte() {
         : "assets/makler.jpg";
 
       button.innerHTML = `
-        <img src="${bildUrl}" alt="${titel}" loading="lazy">
+        <img
+          src="${bildUrl || "assets/makler.jpg"}"
+          alt="${titel}"
+          loading="lazy"
+          onerror="this.onerror=null;this.src='assets/makler.jpg';"
+        >
         <div class="object-text">
           <strong>${titel}</strong>
           <p>${wohnflaeche}${wohnflaeche && ort ? " · " : ""}${ort}</p>
@@ -349,7 +353,13 @@ function zeigeObjektModal(index) {
   objectModalContent.innerHTML = `
     <div class="object-modal-layout">
       <div class="object-modal-visual">
-        <img src="${bildUrl}" alt="${titel}" class="object-modal-image" loading="lazy">
+        <img
+          src="${bildUrl || "assets/makler.jpg"}"
+          alt="${titel}"
+          class="object-modal-image"
+          loading="lazy"
+          onerror="this.onerror=null;this.src='assets/makler.jpg';"
+        >
       </div>
 
       <div class="object-modal-info">
