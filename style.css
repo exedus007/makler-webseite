@@ -1,14 +1,8 @@
-* {
-  box-sizing: border-box;
-}
-
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f7f5f1;
+  font-family: Arial;
 }
 
-/* Layout */
 .container {
   width: 90%;
   max-width: 1100px;
@@ -25,105 +19,79 @@ body {
 /* Navbar */
 .navbar {
   background: white;
-  border-bottom: 1px solid #eee;
 }
 
 .nav-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 0;
 }
 
 .logo {
-  height: 90px;
+  height: 80px;
   transform: scaleX(1.2);
-}
-
-.nav-links a {
-  margin-left: 20px;
-  text-decoration: none;
-  color: #0f4b3a;
-  font-weight: bold;
 }
 
 /* HERO */
 .hero {
   padding: 80px 0;
-  background: linear-gradient(135deg,#efe4d1,#f8f4ec);
-}
-
-.hero-content {
-  max-width: 900px;
-}
-
-.hero-subline {
-  font-size: 14px;
-  letter-spacing: 2px;
-  font-weight: bold;
-  color: #0f4b3a;
+  background: #f3eee6;
 }
 
 .hero h1 {
-  font-size: 64px;
-  line-height: 1.05;
+  font-size: 60px;
   color: #12392d;
 }
 
-.hero-text {
-  font-size: 18px;
-  line-height: 1.7;
-  color: #444;
-}
-
-/* KONTAKT */
-.contact {
+/* SECTIONS */
+.section {
   padding: 60px 0;
 }
 
+.dark {
+  background: #0f4b3a;
+  color: white;
+}
+
+/* GRID */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 10px;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+}
+
+/* CONTACT */
 .contact-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 30px;
 }
 
 .contact-btn {
-  display: flex;
-  gap: 15px;
-  padding: 15px;
-  border-radius: 10px;
-  background: white;
-  text-decoration: none;
-  color: black;
-  margin-bottom: 10px;
-}
-
-.contact-btn:hover {
+  display: block;
   background: #eee;
-}
-
-/* FORM */
-form input,
-form textarea {
-  width: 100%;
+  padding: 15px;
   margin-bottom: 10px;
-  padding: 12px;
+  text-decoration: none;
 }
 
-button {
+/* FOOTER */
+.footer {
   background: #0f4b3a;
   color: white;
-  padding: 12px;
-  border: none;
+  padding: 20px;
 }
 
-/* Mobile */
-@media (max-width: 768px) {
-  .contact-grid {
+/* MOBILE */
+@media (max-width:768px){
+  .grid {
     grid-template-columns: 1fr;
   }
-
-  .hero h1 {
-    font-size: 36px;
+  .contact-grid {
+    grid-template-columns: 1fr;
   }
 }
