@@ -1,6 +1,8 @@
 const projectId = "lya1es34";
 const dataset = "production";
-const formspreeEndpoint = "https://formspree.io/f/DEINE_FORMSPREE_ID";
+
+const contactEndpoint = "contact.php";
+const objectInquiryEndpoint = "object-inquiry.php";
 
 let objekteListe = [];
 let aktuellerObjektIndex = 0;
@@ -48,7 +50,32 @@ function statusBadgeClass(status) {
   return "object-status-verfuegbar";
 }
 
-document.querySelectorAll('.footer a').forEach(a => (a.target = '_blank', a.rel = 'noopener noreferrer'));
+function kurzIdAusSanityId(id) {
+  const clean = String(id || "").replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
+  if (!clean) return "OBJ-UNBEKANNT";
+  return `OBJ-${clean.slice(-6)}`;
+}
+
+function holeObjektReferenz(obj) {
+  if (obj?.referenznummer && String(obj.referenznummer).trim()) {
+    return String(obj.referenznummer).trim();
+  }
+  return kurzIdAusSanityId(obj?._id);
+}
+
+function setFormStatus(element, message, type = "") {
+  if (!element) return;
+  element.textContent = message || "";
+  element.className = "form-status";
+  if (type) {
+    element.classList.add(type);
+  }
+}
+
+document.querySelectorAll(".footer a").forEach((a) => {
+  a.target = "_blank";
+  a.rel = "noopener noreferrer";
+});
 
 const menuToggle = document.getElementById("menu-toggle");
 const navLinks = document.getElementById("nav-links");
@@ -150,19 +177,23 @@ if (scrollTopBtn) {
 }
 
 const contactForm = document.getElementById("contact-form");
+const contactFormStatus = document.getElementById("contact-form-status");
 
 if (contactForm) {
   contactForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const privacy = contactForm.querySelector('input[name="privacy"]');
-    if (privacy && !privacy.checked) {
-      alert("Bitte bestätigen Sie die Datenschutzhinweise.");
+    const honeypot = contactForm.querySelector('input[name="website"]');
+
+    if (honeypot && honeypot.value.trim() !== "") {
+      setFormStatus(contactFormStatus, "Vielen Dank. Ihre Anfrage wird verarbeitet.", "success");
+      contactForm.reset();
       return;
     }
 
-    if (formspreeEndpoint.includes("DEINE_FORMSPREE_ID")) {
-      alert("Bitte tragen Sie zuerst Ihre echte Formspree-ID in der script.js ein.");
+    if (privacy && !privacy.checked) {
+      setFormStatus(contactFormStatus, "Bitte bestätigen Sie die Datenschutzhinweise.", "error");
       return;
     }
 
@@ -174,10 +205,12 @@ if (contactForm) {
       submitButton.textContent = "Wird gesendet...";
     }
 
+    setFormStatus(contactFormStatus, "");
+
     try {
       const formData = new FormData(contactForm);
 
-      const response = await fetch(formspreeEndpoint, {
+      const response = await fetch(contactEndpoint, {
         method: "POST",
         body: formData,
         headers: {
@@ -185,15 +218,31 @@ if (contactForm) {
         }
       });
 
-      if (response.ok) {
-        alert("Vielen Dank! Ihre Anfrage wurde erfolgreich gesendet.");
+      let result = null;
+
+      try {
+        result = await response.json();
+      } catch (jsonError) {
+        result = null;
+      }
+
+      if (response.ok && result?.success) {
+        setFormStatus(contactFormStatus, "Vielen Dank! Ihre Anfrage wurde erfolgreich gesendet.", "success");
         contactForm.reset();
       } else {
-        alert("Beim Senden ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.");
+        setFormStatus(
+          contactFormStatus,
+          result?.message || "Beim Senden ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
+          "error"
+        );
       }
     } catch (error) {
-      console.error("Fehler beim Senden des Hauptformulars:", error);
-      alert("Beim Senden ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.");
+      console.error("Fehler beim Senden des Kontaktformulars:", error);
+      setFormStatus(
+        contactFormStatus,
+        "Beim Senden ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.",
+        "error"
+      );
     } finally {
       if (submitButton) {
         submitButton.disabled = false;
@@ -211,6 +260,7 @@ async function ladeObjekte() {
     const query = encodeURIComponent(`
       *[_type=="immobilie"] | order(_createdAt desc){
         _id,
+        referenznummer,
         titel,
         ort,
         preis,
@@ -248,6 +298,7 @@ async function ladeObjekte() {
       const titel = escapeHtml(objekt.titel || "Objekt");
       const wohnflaeche = escapeHtml(objekt.wohnflaeche || "");
       const ort = escapeHtml(objekt.ort || "");
+      const referenz = escapeHtml(holeObjektReferenz(objekt));
       const bildUrl = objekt?.bild?.asset?._ref ? bildUrlAusRef(objekt.bild.asset._ref) : "assets/makler.jpg";
 
       button.innerHTML = `
@@ -255,6 +306,7 @@ async function ladeObjekte() {
         <div class="object-text">
           <strong>${titel}</strong>
           <p>${wohnflaeche} ${wohnflaeche && ort ? "·" : ""} ${ort}</p>
+          <p class="object-reference">Referenz: ${referenz}</p>
           <span class="object-status-badge ${statusBadgeClass(objekt.status)}">${statusText(objekt.status)}</span>
         </div>
       `;
@@ -318,16 +370,27 @@ function zeigeObjektModal(index) {
 
   lastFocusedElement = document.activeElement;
 
-  const titel = escapeHtml(obj.titel || "Objekt");
-  const ort = escapeHtml(obj.ort || "");
-  const preis = escapeHtml(obj.preis || "");
-  const wohnflaeche = escapeHtml(obj.wohnflaeche || "");
-  const zimmer = escapeHtml(obj.zimmer || "");
-  const beschreibung = escapeHtml(obj.beschreibung || "");
-  const objektId = escapeHtml(obj._id || "");
-  const status = statusText(obj.status);
+  const titelRaw = obj.titel || "Objekt";
+  const ortRaw = obj.ort || "";
+  const preisRaw = obj.preis || "";
+  const wohnflaecheRaw = obj.wohnflaeche || "";
+  const zimmerRaw = obj.zimmer || "";
+  const beschreibungRaw = obj.beschreibung || "";
+  const statusRaw = statusText(obj.status);
+  const objektIdInternRaw = obj._id || "";
+  const objektRefRaw = holeObjektReferenz(obj);
 
-  objectModalTitle.textContent = obj.titel || "Objekt";
+  const titel = escapeHtml(titelRaw);
+  const ort = escapeHtml(ortRaw);
+  const preis = escapeHtml(preisRaw);
+  const wohnflaeche = escapeHtml(wohnflaecheRaw);
+  const zimmer = escapeHtml(zimmerRaw);
+  const beschreibung = escapeHtml(beschreibungRaw);
+  const status = escapeHtml(statusRaw);
+  const objektIdIntern = escapeHtml(objektIdInternRaw);
+  const objektRef = escapeHtml(objektRefRaw);
+
+  objectModalTitle.textContent = titelRaw || "Objekt";
 
   const bildUrl = obj?.bild?.asset?._ref ? bildUrlAusRef(obj.bild.asset._ref) : "assets/makler.jpg";
   const exposeUrl = obj?.expose?.asset?._ref ? exposeUrlAusRef(obj.expose.asset._ref) : "";
@@ -362,23 +425,33 @@ function zeigeObjektModal(index) {
 
         <div class="object-modal-description">${beschreibung}</div>
 
-        <span class="object-status-badge ${statusBadgeClass(obj.status)}">${status}</span>
-        <div class="object-modal-id">Objekt-ID: ${objektId}</div>
+        <span class="object-status-badge ${statusBadgeClass(obj.status)}">${statusRaw}</span>
+        <div class="object-modal-id">Referenz: ${objektRef}</div>
 
         <div class="object-modal-actions">
           ${exposeUrl ? `<a class="object-action-btn secondary" href="${exposeUrl}" target="_blank" rel="noopener noreferrer">Exposé ansehen</a>` : ``}
           ${exposeUrl ? `<a class="object-action-btn outline" href="${exposeUrl}" download>Exposé herunterladen</a>` : ``}
         </div>
 
-        <form class="object-inquiry-form" action="${formspreeEndpoint}" method="POST">
+        <form class="object-inquiry-form" id="object-inquiry-form" novalidate>
           <h5>Anfrage senden</h5>
 
-          <input type="hidden" name="objekt_id" value="${objektId}">
+          <input
+            type="text"
+            name="website"
+            class="hp-field"
+            tabindex="-1"
+            autocomplete="off"
+            aria-hidden="true"
+          >
+
+          <input type="hidden" name="objekt_id_intern" value="${objektIdIntern}">
+          <input type="hidden" name="objekt_ref" value="${objektRef}">
           <input type="hidden" name="objekt_titel" value="${titel}">
           <input type="hidden" name="objekt_ort" value="${ort}">
           <input type="hidden" name="objekt_preis" value="${preis}">
-          <input type="hidden" name="objekt_status" value="${escapeHtml(status)}">
-          <input type="hidden" name="_subject" value="Neue Objektanfrage: ${titel} | ID: ${objektId}">
+          <input type="hidden" name="objekt_status" value="${status}">
+          <input type="hidden" name="_subject" value="Neue Objektanfrage: ${titel} | Referenz: ${objektRef}">
 
           <div class="object-form-grid">
             <div class="object-form-group">
@@ -393,12 +466,12 @@ function zeigeObjektModal(index) {
 
             <div class="object-form-group">
               <label for="object-phone">Telefon</label>
-              <input id="object-phone" type="text" name="telefon" autocomplete="tel">
+              <input id="object-phone" type="text" name="phone" autocomplete="tel">
             </div>
 
             <div class="object-form-group">
               <label for="object-betreff">Betreff</label>
-              <input id="object-betreff" type="text" name="betreff" value="Anfrage zu ${titel}">
+              <input id="object-betreff" type="text" name="subject" value="Anfrage zu ${titel}">
             </div>
 
             <div class="object-form-group full">
@@ -407,11 +480,11 @@ function zeigeObjektModal(index) {
 
 ich interessiere mich für folgendes Objekt:
 
-Titel: ${obj.titel || ""}
-Ort: ${obj.ort || ""}
-Preis: ${obj.preis || ""}
-Status: ${status}
-Objekt-ID: ${obj._id || ""}
+Titel: ${titelRaw}
+Ort: ${ortRaw}
+Preis: ${preisRaw}
+Status: ${statusRaw}
+Referenz: ${objektRefRaw}
 
 Bitte kontaktieren Sie mich.
 
@@ -419,11 +492,24 @@ Vielen Dank.</textarea>
             </div>
           </div>
 
+          <label class="checkbox-wrap object-checkbox-wrap">
+            <input type="checkbox" name="privacy" required>
+            <span>
+              Ich habe die
+              <a href="assets/datenschutzbestimmungen.pdf" target="_blank" rel="noopener noreferrer">
+                Datenschutzbestimmungen
+              </a>
+              gelesen und bin damit einverstanden, dass meine Angaben zur Bearbeitung meiner Anfrage gespeichert und verarbeitet werden.
+            </span>
+          </label>
+
           <div class="object-form-note">
-            Die Objekt-ID und die wichtigsten Objektdaten werden automatisch mitgesendet, damit Ihre Anfrage sofort dem richtigen Objekt zugeordnet werden kann.
+            Die Referenz und die wichtigsten Objektdaten werden automatisch mitgesendet, damit Ihre Anfrage sofort dem richtigen Objekt zugeordnet werden kann.
           </div>
 
-          <button type="submit" class="object-action-btn primary">Anfrage direkt senden</button>
+          <div class="form-status" id="object-form-status" aria-live="polite"></div>
+
+          <button type="submit" class="object-action-btn primary object-submit-btn">Anfrage direkt senden</button>
         </form>
       </div>
     </div>
@@ -432,6 +518,86 @@ Vielen Dank.</textarea>
   objectModal.classList.add("open");
   objectModal.setAttribute("aria-hidden", "false");
   document.body.classList.add("modal-open");
+
+  const objectForm = document.getElementById("object-inquiry-form");
+  const objectFormStatus = document.getElementById("object-form-status");
+
+  if (objectForm) {
+    objectForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const privacy = objectForm.querySelector('input[name="privacy"]');
+      const honeypot = objectForm.querySelector('input[name="website"]');
+
+      if (honeypot && honeypot.value.trim() !== "") {
+        setFormStatus(objectFormStatus, "Vielen Dank. Ihre Anfrage wird verarbeitet.", "success");
+        objectForm.reset();
+        return;
+      }
+
+      if (privacy && !privacy.checked) {
+        setFormStatus(objectFormStatus, "Bitte bestätigen Sie die Datenschutzhinweise.", "error");
+        return;
+      }
+
+      const submitButton = objectForm.querySelector(".object-submit-btn");
+      const originalButtonText = submitButton ? submitButton.textContent : "";
+
+      if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.textContent = "Wird gesendet...";
+      }
+
+      setFormStatus(objectFormStatus, "");
+
+      try {
+        const formData = new FormData(objectForm);
+
+        const response = await fetch(objectInquiryEndpoint, {
+          method: "POST",
+          body: formData,
+          headers: {
+            Accept: "application/json"
+          }
+        });
+
+        let result = null;
+
+        try {
+          result = await response.json();
+        } catch (jsonError) {
+          result = null;
+        }
+
+        if (response.ok && result?.success) {
+          setFormStatus(objectFormStatus, "Vielen Dank! Ihre Objektanfrage wurde erfolgreich gesendet.", "success");
+          objectForm.reset();
+
+          setTimeout(() => {
+            schliesseObjektModal();
+          }, 1200);
+        } else {
+          setFormStatus(
+            objectFormStatus,
+            result?.message || "Beim Senden ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
+            "error"
+          );
+        }
+      } catch (error) {
+        console.error("Fehler beim Senden der Objektanfrage:", error);
+        setFormStatus(
+          objectFormStatus,
+          "Beim Senden ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.",
+          "error"
+        );
+      } finally {
+        if (submitButton) {
+          submitButton.disabled = false;
+          submitButton.textContent = originalButtonText;
+        }
+      }
+    });
+  }
 
   setTimeout(() => {
     focusFirstModalElement();
