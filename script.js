@@ -48,6 +48,8 @@ function statusBadgeClass(status) {
   return "object-status-verfuegbar";
 }
 
+document.querySelectorAll('.footer a').forEach(a => (a.target = '_blank', a.rel = 'noopener noreferrer'));
+
 const menuToggle = document.getElementById("menu-toggle");
 const navLinks = document.getElementById("nav-links");
 const navBackdrop = document.getElementById("nav-backdrop");
