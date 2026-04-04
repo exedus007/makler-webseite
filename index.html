@@ -4,16 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Deisterblick Immobilien</title>
+
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+<!-- TOPBAR -->
 <div class="topbar">
   <div class="container">
     📞 0177 - 2929512
   </div>
 </div>
 
+<!-- NAV -->
 <nav class="navbar">
   <div class="container nav-container">
     <img src="assets/logo.jpg" class="logo">
@@ -26,6 +29,7 @@
   </div>
 </nav>
 
+<!-- HERO -->
 <header class="hero">
   <div class="container hero-content">
 
@@ -47,5 +51,57 @@
   </div>
 </header>
 
+<!-- KONTAKT -->
+<section class="contact">
+  <div class="container contact-grid">
+
+    <div class="contact-left">
+      <h2>Kontakt</h2>
+
+      <div class="contact-buttons">
+
+        <a href="tel:01772929512" class="contact-btn">
+          📞 <div>
+            <strong>Telefon</strong>
+            <span>0177 - 2929512</span>
+          </div>
+        </a>
+
+        <a href="mailto:info@deisterblick-immobilien.de" class="contact-btn">
+          ✉️ <div>
+            <strong>E-Mail</strong>
+            <span>info@deisterblick-immobilien.de</span>
+          </div>
+        </a>
+
+        <a href="#" class="contact-btn">
+          📍 <div>
+            <strong>Adresse</strong>
+            <span>Barsinghausen</span>
+          </div>
+        </a>
+
+      </div>
+    </div>
+
+    <div class="contact-right">
+      <form>
+        <input type="text" placeholder="Ihr Name" required>
+        <input type="email" placeholder="Ihre E-Mail" required>
+        <textarea placeholder="Ihre Nachricht"></textarea>
+
+        <label class="checkbox">
+          <input type="checkbox" required>
+          Ich habe die Datenschutzbestimmungen gelesen
+        </label>
+
+        <button type="submit">Anfrage senden</button>
+      </form>
+    </div>
+
+  </div>
+</section>
+
+<script src="script.js"></script>
 </body>
 </html>
