@@ -57,7 +57,6 @@ a {
   min-width: 0;
 }
 
-/* Fokus */
 a:focus-visible,
 button:focus-visible,
 input:focus-visible,
@@ -670,6 +669,16 @@ textarea:focus-visible {
   flex: 1 1 auto;
   min-width: 0;
   text-align: left;
+}
+
+.checkbox-wrap a {
+  color: #0f4b3a;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.checkbox-wrap a:hover {
+  color: #0c3d2f;
 }
 
 .submit-btn {
