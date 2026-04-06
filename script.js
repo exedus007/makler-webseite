@@ -277,7 +277,7 @@ async function ladeObjekte() {
     const res = await fetch(url);
 
     if (!res.ok) {
-      throw new Error(\`HTTP-Fehler: \${res.status}\`);
+      throw new Error(`HTTP-Fehler: ${res.status}`);
     }
 
     const data = await res.json();
