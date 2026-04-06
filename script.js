@@ -72,22 +72,6 @@ function setFormStatus(element, message, type = "") {
   }
 }
 
-function updateHeaderOffset() {
-  const siteHeader = document.querySelector(".site-header");
-  const topbar = document.querySelector(".topbar");
-  const navbar = document.querySelector(".navbar");
-
-  if (!siteHeader || !topbar || !navbar) return;
-
-  const topbarHeight = Math.ceil(topbar.offsetHeight);
-  const navbarHeight = Math.ceil(navbar.offsetHeight);
-  const headerHeight = Math.ceil(siteHeader.offsetHeight);
-
-  document.documentElement.style.setProperty("--topbar-height", `${topbarHeight}px`);
-  document.documentElement.style.setProperty("--navbar-height", `${navbarHeight}px`);
-  document.documentElement.style.setProperty("--header-offset", `${headerHeight}px`);
-}
-
 document.querySelectorAll(".footer a").forEach((a) => {
   a.target = "_blank";
   a.rel = "noopener noreferrer";
@@ -156,11 +140,7 @@ window.addEventListener("resize", () => {
   if (!istMobileNavigation()) {
     schliesseMenue();
   }
-  updateHeaderOffset();
 });
-
-window.addEventListener("load", updateHeaderOffset);
-document.addEventListener("DOMContentLoaded", updateHeaderOffset);
 
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && navLinks?.classList.contains("open")) {
@@ -297,14 +277,14 @@ async function ladeObjekte() {
     const res = await fetch(url);
 
     if (!res.ok) {
-      throw new Error(`HTTP-Fehler: ${res.status}`);
+      throw new Error(\`HTTP-Fehler: \${res.status}\`);
     }
 
     const data = await res.json();
-    objekteListe = (data.result || []).filter((obj) => obj.status !== "verkauft");
+    objekteListe = data.result || [];
 
     if (objekteListe.length === 0) {
-      container.innerHTML = '<p class="objects-empty">Aktuell sind keine verfügbaren oder reservierten Objekte vorhanden.</p>';
+      container.innerHTML = '<p class="objects-empty">Aktuell sind keine Objekte vorhanden.</p>';
       return;
     }
 
