@@ -436,22 +436,12 @@ function zeigeObjektModal(index) {
         <form class="object-inquiry-form" id="object-inquiry-form" novalidate>
           <h5>Anfrage senden</h5>
 
-          <input
-            type="text"
-            name="website"
-            class="hp-field"
-            tabindex="-1"
-            autocomplete="off"
-            aria-hidden="true"
-          >
-
           <input type="hidden" name="objekt_id_intern" value="${objektIdIntern}">
           <input type="hidden" name="objekt_ref" value="${objektRef}">
-          <input type="hidden" name="objekt_titel" value="${titel}">
-          <input type="hidden" name="objekt_ort" value="${ort}">
-          <input type="hidden" name="objekt_preis" value="${preis}">
-          <input type="hidden" name="objekt_status" value="${status}">
-          <input type="hidden" name="_subject" value="Neue Objektanfrage: ${titel} | Referenz: ${objektRef}">
+          <input type="hidden" name="objekt_titel" value="${titelRaw}">
+          <input type="hidden" name="objekt_ort" value="${ortRaw}">
+          <input type="hidden" name="objekt_preis" value="${preisRaw}">
+          <input type="hidden" name="objekt_status" value="${statusRaw}">
 
           <div class="object-form-grid">
             <div class="object-form-group">
@@ -471,7 +461,7 @@ function zeigeObjektModal(index) {
 
             <div class="object-form-group">
               <label for="object-betreff">Betreff</label>
-              <input id="object-betreff" type="text" name="subject" value="Anfrage zu ${titel}">
+              <input id="object-betreff" type="text" name="subject" value="Anfrage zu ${titelRaw}">
             </div>
 
             <div class="object-form-group full">
@@ -527,13 +517,6 @@ Vielen Dank.</textarea>
       e.preventDefault();
 
       const privacy = objectForm.querySelector('input[name="privacy"]');
-      const honeypot = objectForm.querySelector('input[name="website"]');
-
-      if (honeypot && honeypot.value.trim() !== "") {
-        setFormStatus(objectFormStatus, "Vielen Dank. Ihre Anfrage wird verarbeitet.", "success");
-        objectForm.reset();
-        return;
-      }
 
       if (privacy && !privacy.checked) {
         setFormStatus(objectFormStatus, "Bitte bestätigen Sie die Datenschutzhinweise.", "error");
