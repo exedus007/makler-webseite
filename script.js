@@ -72,6 +72,22 @@ function setFormStatus(element, message, type = "") {
   }
 }
 
+function updateHeaderOffset() {
+  const siteHeader = document.querySelector(".site-header");
+  const topbar = document.querySelector(".topbar");
+  const navbar = document.querySelector(".navbar");
+
+  if (!siteHeader || !topbar || !navbar) return;
+
+  const topbarHeight = Math.ceil(topbar.offsetHeight);
+  const navbarHeight = Math.ceil(navbar.offsetHeight);
+  const headerHeight = Math.ceil(siteHeader.offsetHeight);
+
+  document.documentElement.style.setProperty("--topbar-height", `${topbarHeight}px`);
+  document.documentElement.style.setProperty("--navbar-height", `${navbarHeight}px`);
+  document.documentElement.style.setProperty("--header-offset", `${headerHeight}px`);
+}
+
 document.querySelectorAll(".footer a").forEach((a) => {
   a.target = "_blank";
   a.rel = "noopener noreferrer";
@@ -140,7 +156,11 @@ window.addEventListener("resize", () => {
   if (!istMobileNavigation()) {
     schliesseMenue();
   }
+  updateHeaderOffset();
 });
+
+window.addEventListener("load", updateHeaderOffset);
+document.addEventListener("DOMContentLoaded", updateHeaderOffset);
 
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && navLinks?.classList.contains("open")) {
