@@ -1,168 +1,65 @@
 <?php
-declare(strict_types=1);
+require 'mailer-common.php';
 
-header('Content-Type: application/json; charset=utf-8');
+header('Content-Type: application/json');
 
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
+session_start();
 
-require __DIR__ . '/PHPMailer/src/Exception.php';
-require __DIR__ . '/PHPMailer/src/PHPMailer.php';
-require __DIR__ . '/PHPMailer/src/SMTP.php';
+/* Rate Limit */
+if(isset($_SESSION['t']) && time() - $_SESSION['t'] < 5){
+  echo json_encode(['success'=>false,'message'=>'Bitte kurz warten']);
+  exit;
+}
+$_SESSION['t'] = time();
 
-function respond(int $statusCode, array $data): void
-{
-    http_response_code($statusCode);
-    echo json_encode($data, JSON_UNESCAPED_UNICODE);
-    exit;
+/* Honeypot */
+if(!empty($_POST['website'])){
+  echo json_encode(['success'=>true]);
+  exit;
 }
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    respond(405, [
-        'success' => false,
-        'message' => 'Ungültige Anfrage.'
-    ]);
-}
-
-function clean(string $value): string
-{
-    return trim($value);
-}
-
-$name = clean($_POST['name'] ?? '');
-$email = clean($_POST['email'] ?? '');
-$phone = clean($_POST['phone'] ?? '');
-$subject = clean($_POST['subject'] ?? '');
-$message = clean($_POST['message'] ?? '');
+/* Daten */
+$name = trim($_POST['name'] ?? '');
+$email = trim($_POST['email'] ?? '');
+$msg = trim($_POST['message'] ?? '');
 $privacy = $_POST['privacy'] ?? '';
-$honeypot = clean($_POST['website'] ?? '');
 
-if ($honeypot !== '') {
-    respond(200, [
-        'success' => true,
-        'message' => 'Vielen Dank. Ihre Anfrage wurde empfangen.'
-    ]);
+if(!$name || !$email || !$msg || !$privacy){
+  echo json_encode(['success'=>false,'message'=>'Pflichtfelder fehlen']);
+  exit;
 }
 
-if ($name === '' || $email === '' || $message === '') {
-    respond(422, [
-        'success' => false,
-        'message' => 'Bitte füllen Sie alle Pflichtfelder aus.'
-    ]);
+if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
+  echo json_encode(['success'=>false,'message'=>'Ungültige E-Mail']);
+  exit;
 }
 
-if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    respond(422, [
-        'success' => false,
-        'message' => 'Bitte geben Sie eine gültige E-Mail-Adresse ein.'
-    ]);
-}
+/* Mail */
+use PHPMailer\PHPMailer\PHPMailer;
+require 'PHPMailer/src/PHPMailer.php';
 
-if ($privacy === '') {
-    respond(422, [
-        'success' => false,
-        'message' => 'Bitte bestätigen Sie die Datenschutzhinweise.'
-    ]);
-}
+$c = config();
+$mail = new PHPMailer(true);
 
-if ($subject === '') {
-    $subject = 'Allgemeine Kontaktanfrage';
-}
+try{
+  $mail->isSMTP();
+  $mail->Host = $c['host'];
+  $mail->SMTPAuth = true;
+  $mail->Username = $c['user'];
+  $mail->Password = $c['pass'];
+  $mail->Port = $c['port'];
 
-/*
-|--------------------------------------------------------------------------
-| SMTP-EINSTELLUNGEN SPÄTER FÜR IONOS ANPASSEN
-|--------------------------------------------------------------------------
-*/
-$smtpHost = 'smtp.ionos.de';
-$smtpPort = 587;
-$smtpSecure = PHPMailer::ENCRYPTION_STARTTLS;
-$smtpUsername = 'info@deine-domain.de';
-$smtpPassword = 'HIER_IHR_EMAIL_PASSWORT_EINTRAGEN';
+  $mail->setFrom($c['from']);
+  $mail->addAddress($c['from']);
 
-$companyName = 'Deisterblick Immobilien';
-$receiverEmail = 'info@deine-domain.de';
-$receiverName = 'Deisterblick Immobilien';
+  $mail->Subject = "Neue Anfrage";
+  $mail->Body = "Name: $name\nEmail: $email\n\n$msg";
 
-$fromEmail = 'info@deine-domain.de';
-$fromName = 'Deisterblick Immobilien Website';
+  $mail->send();
 
-$customerSubject = 'Ihre Anfrage bei Deisterblick Immobilien';
+  echo json_encode(['success'=>true]);
 
-$adminBody = <<<TEXT
-Neue Kontaktanfrage über die Webseite
-
-Name: {$name}
-E-Mail: {$email}
-Telefon: {$phone}
-Betreff: {$subject}
-
-Nachricht:
-{$message}
-TEXT;
-
-$customerBody = <<<TEXT
-Guten Tag {$name},
-
-vielen Dank für Ihre Nachricht.
-
-Wir haben Ihre Anfrage erhalten und melden uns schnellstmöglich bei Ihnen zurück.
-
-Ihre Angaben:
-Name: {$name}
-E-Mail: {$email}
-Telefon: {$phone}
-Betreff: {$subject}
-
-Freundliche Grüße
-{$companyName}
-TEXT;
-
-try {
-    $adminMailer = new PHPMailer(true);
-    $adminMailer->isSMTP();
-    $adminMailer->Host = $smtpHost;
-    $adminMailer->SMTPAuth = true;
-    $adminMailer->Username = $smtpUsername;
-    $adminMailer->Password = $smtpPassword;
-    $adminMailer->SMTPSecure = $smtpSecure;
-    $adminMailer->Port = $smtpPort;
-    $adminMailer->CharSet = 'UTF-8';
-
-    $adminMailer->setFrom($fromEmail, $fromName);
-    $adminMailer->addAddress($receiverEmail, $receiverName);
-    $adminMailer->addReplyTo($email, $name);
-
-    $adminMailer->Subject = 'Neue Kontaktanfrage: ' . $subject;
-    $adminMailer->Body = $adminBody;
-    $adminMailer->isHTML(false);
-    $adminMailer->send();
-
-    $customerMailer = new PHPMailer(true);
-    $customerMailer->isSMTP();
-    $customerMailer->Host = $smtpHost;
-    $customerMailer->SMTPAuth = true;
-    $customerMailer->Username = $smtpUsername;
-    $customerMailer->Password = $smtpPassword;
-    $customerMailer->SMTPSecure = $smtpSecure;
-    $customerMailer->Port = $smtpPort;
-    $customerMailer->CharSet = 'UTF-8';
-
-    $customerMailer->setFrom($fromEmail, $companyName);
-    $customerMailer->addAddress($email, $name);
-
-    $customerMailer->Subject = $customerSubject;
-    $customerMailer->Body = $customerBody;
-    $customerMailer->isHTML(false);
-    $customerMailer->send();
-
-    respond(200, [
-        'success' => true,
-        'message' => 'Vielen Dank! Ihre Anfrage wurde erfolgreich gesendet.'
-    ]);
-} catch (Exception $e) {
-    respond(500, [
-        'success' => false,
-        'message' => 'Beim Versand der E-Mail ist ein Fehler aufgetreten.'
-    ]);
+}catch(Exception $e){
+  error_log($e->getMessage());
+  echo json_encode(['success'=>false]);
 }
