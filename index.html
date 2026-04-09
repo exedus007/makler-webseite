@@ -3,442 +3,60 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Deisterblick Immobilien</title>
-  <meta
-    name="description"
-    content="Deisterblick Immobilien – persönliche Beratung rund um Verkauf, Bewertung, Vermarktung und Immobilienservice am Deister und in der Umgebung."
-  >
-  <meta name="theme-color" content="#0f4b3a">
+  <meta name="description" content="Deisterblick Immobilien – Verkauf, Bewertung und Immobilienservice am Deister">
+
+  <!-- SEO -->
+  <meta property="og:title" content="Deisterblick Immobilien">
+  <meta property="og:description" content="Ihr Immobilienpartner am Deister">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="assets/logo.jpg">
+
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-  <header class="site-header">
-    <div class="topbar">
-      <div class="container topbar-inner">
-        <a href="tel:+491772929512" class="topbar-link topbar-phone">📞 0177 - 2929512</a>
-        <a href="mailto:info@deisterblick-immobilien.de" class="topbar-link">✉️ info@deisterblick-immobilien.de</a>
-      </div>
-    </div>
+<header class="header">
+  <h1>Deisterblick Immobilien</h1>
+</header>
 
-    <nav class="navbar">
-      <div class="container nav-container">
-        <a href="#home" class="logo" aria-label="Zur Startseite">
-          <img src="assets/logo.jpg" alt="Deisterblick Immobilien Logo" loading="eager" fetchpriority="high">
-        </a>
+<main>
 
-        <button
-          class="menu-toggle"
-          id="menu-toggle"
-          aria-label="Menü öffnen"
-          aria-expanded="false"
-          aria-controls="nav-links"
-          type="button"
-        >
-          <span class="sr-only">Menü öffnen</span>
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
-
-        <div class="nav-links" id="nav-links">
-          <a href="#home">Start</a>
-          <a href="#vorteile">Vorteile</a>
-          <a href="#bewertung">Bewertung</a>
-          <a href="#leistungen">Leistungen</a>
-          <a href="#meine-objekte">Meine Objekte</a>
-          <a href="#uebermich">Über mich</a>
-          <a href="#faq">FAQ</a>
-          <a href="#kontakt">Kontakt</a>
-        </div>
-      </div>
-    </nav>
-  </header>
-
-  <div class="nav-backdrop" id="nav-backdrop" hidden></div>
-
-  <header class="hero" id="home">
-    <div class="hero-overlay"></div>
-
-    <div class="container hero-grid">
-      <div class="hero-left reveal">
-        <p class="eyebrow">VERWALTUNG · MAKLER · FINANZIERUNG</p>
-
-        <h1>Ihr&nbsp;Immobilienpartner am Deister und Umgebung</h1>
-
-        <p class="hero-text">
-          Bei Deisterblick Immobilien stehen persönliche Beratung, ehrliche Kommunikation und ein klarer Ablauf im Mittelpunkt.
-          Ich begleite Sie rund um Verkauf, Vermietung und Immobilienservice mit regionaler Marktkenntnis und einem offenen Blick für das,
-          was Ihnen wirklich wichtig ist.
-        </p>
-
-        <div class="hero-tags">
-          <span>Immobilien Makler</span>
-          <span>Immobilienbewertung</span>
-          <span>Immobilien Finanzierung</span>
-          <span>Immobilien Verwaltung</span>
-          <span>Modernisierung und Sanierung</span>
-          <span>Persönliche Betreuung</span>
-        </div>
-
-        <div class="hero-buttons hero-buttons-shifted">
-          <a href="#kontakt" class="btn btn-green">Jetzt Beratung anfragen</a>
-          <a href="#bewertung" class="btn btn-green btn-secondary-green">Immobilie bewerten</a>
-        </div>
-      </div>
-
-      <div class="hero-right reveal reveal-delay">
-        <div class="hero-image-card">
-          <img src="assets/makler.jpg" alt="Deisterblick Immobilien" loading="lazy">
-        </div>
-      </div>
-    </div>
-  </header>
-
-  <section class="section trust-section" id="vorteile">
-    <div class="container">
-      <div class="section-head reveal trust-head">
-        <p class="eyebrow">Ihre Vorteile</p>
-        <h2>Vertrauen, Marktkenntnis und persönliche Begleitung</h2>
-        <p class="section-text">
-          Gerade bei Immobilien geht es nicht nur um Zahlen und Unterlagen, sondern auch um Vertrauen, gute Erreichbarkeit
-          und einen Ablauf, bei dem Sie sich gut aufgehoben fühlen.
-        </p>
-      </div>
-
-      <div class="trust-grid">
-        <div class="trust-card reveal">
-          <div class="trust-icon" aria-hidden="true">🤝</div>
-          <h3>Persönliche Betreuung</h3>
-          <p>Sie haben einen festen Ansprechpartner, der für Sie da ist und den gesamten Prozess im Blick behält.</p>
-        </div>
-
-        <div class="trust-card reveal">
-          <div class="trust-icon" aria-hidden="true">📍</div>
-          <h3>Regionale Marktkenntnis</h3>
-          <p>Ich kenne den Markt am Deister und in der Umgebung und kann Chancen und Preise realistisch einordnen.</p>
-        </div>
-
-        <div class="trust-card reveal">
-          <div class="trust-icon" aria-hidden="true">📈</div>
-          <h3>Durchdachte Vermarktung</h3>
-          <p>Ihre Immobilie wird ansprechend präsentiert und so positioniert, dass sie die passenden Interessenten erreicht.</p>
-        </div>
-
-        <div class="trust-card reveal">
-          <div class="trust-icon" aria-hidden="true">📝</div>
-          <h3>Begleitung bis zum Abschluss</h3>
-          <p>Von der Vorbereitung über Besichtigungen bis hin zum Notartermin begleite ich Sie Schritt für Schritt.</p>
-        </div>
-      </div>
-
-      <div class="trust-cta reveal">
-        <a href="#kontakt" class="btn btn-green">Kostenlose Erstberatung anfragen</a>
-      </div>
-    </div>
-  </section>
-
-  <section class="section section-dark" id="bewertung">
-    <div class="container split-grid">
-      <div class="reveal">
-        <p class="eyebrow eyebrow-light">Online-Bewertung</p>
-        <h2>Starten Sie mit einer fundierten Wertermittlung</h2>
-        <p class="section-text section-text-light">
-          Wer den Wert seiner Immobilie kennt, kann die nächsten Schritte deutlich sicherer planen.
-          Eine realistische Einschätzung schafft Klarheit und bildet die Grundlage für eine gute Vermarktung.
-        </p>
-
-        <ul class="check-list">
-          <li>Kostenlos und unverbindlich</li>
-          <li>Mit Blick auf Markt, Lage und Potenzial</li>
-          <li>Ein sinnvoller erster Schritt für Eigentümer</li>
-        </ul>
-
-        <a href="#kontakt" class="btn btn-green">Bewertung anfragen</a>
-      </div>
-
-      <div class="info-box dark-box reveal reveal-delay">
-        <h3>Warum eine Bewertung wichtig ist</h3>
-        <p>
-          Ein realistischer Angebotspreis hilft dabei, Ihre Immobilie richtig am Markt einzuordnen.
-          So vermeiden Sie unnötige Zeitverluste und schaffen eine verlässliche Basis für die nächsten Entscheidungen.
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <section class="section" id="leistungen">
-    <div class="container">
-      <div class="section-head reveal">
-        <p class="eyebrow">Unsere Leistungen</p>
-        <h2>Alles aus einer Hand</h2>
-        <p class="section-text">
-          Rund um Ihre Immobilie begleite ich Sie persönlich, transparent und mit einem klaren Blick auf das,
-          was für Sie am Ende wirklich zählt.
-        </p>
-      </div>
-
-      <div class="cards-grid">
-        <div class="card reveal">
-          <h3>Immobilien Makler</h3>
-          <p>Ich begleite Sie beim Verkauf oder bei der Vermietung Ihrer Immobilie mit persönlicher Beratung, klarer Kommunikation und einem strukturierten Ablauf.</p>
-        </div>
-
-        <div class="card reveal">
-          <h3>Immobilienbewertung</h3>
-          <p>Sie erhalten eine ehrliche und nachvollziehbare Einschätzung zum Wert Ihrer Immobilie als solide Grundlage für die nächsten Schritte.</p>
-        </div>
-
-        <div class="card reveal">
-          <h3>Immobilien Finanzierung</h3>
-          <p>Auch bei Fragen rund um die Finanzierung stehe ich Ihnen beratend zur Seite und unterstütze dabei, passende Möglichkeiten einzuordnen.</p>
-        </div>
-
-        <div class="card reveal">
-          <h3>Immobilien Verwaltung</h3>
-          <p>Von organisatorischen Themen bis zur laufenden Betreuung unterstütze ich dort, wo im Alltag Entlastung und Übersicht wichtig sind.</p>
-        </div>
-
-        <div class="card reveal">
-          <h3>Modernisierung und Sanierung</h3>
-          <p>Ich helfe dabei, Potenziale einer Immobilie besser zu erkennen und sinnvolle Maßnahmen für Werterhalt oder Vorbereitung auf den Verkauf einzuordnen.</p>
-        </div>
-
-        <div class="card reveal">
-          <h3>Persönliche Betreuung</h3>
-          <p>Sie haben von Anfang bis Ende einen direkten Ansprechpartner, der erreichbar bleibt, ehrlich berät und den Prozess zuverlässig begleitet.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="section" id="meine-objekte">
-    <div class="container">
-      <div class="section-head reveal">
-        <p class="eyebrow">Meine Objekte</p>
-        <h2>Aktuelle Immobilienangebote</h2>
-        <p class="section-text">
-          Hier finden Sie meine aktuellen Immobilienangebote. Mit einem Klick auf ein Objekt öffnen sich weitere Informationen,
-          Bilder, Exposé und die direkte Möglichkeit zur Anfrage.
-        </p>
-      </div>
-
-      <div class="objects-card reveal">
-        <div id="objekte-container" class="objects-dynamic-list">
-          <p class="objects-empty">Objekte werden geladen...</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="section section-soft" id="uebermich">
-    <div class="container">
-      <div class="section-head reveal">
-        <p class="eyebrow">Über mich</p>
-        <h2>Persönlich für Sie da</h2>
-      </div>
-
-      <div class="about-grid">
-        <div class="profile-card reveal">
-          <img src="assets/mein_bild.jpg" alt="Onur Askin" loading="lazy">
-          <div class="profile-content">
-            <h3>Onur Askin</h3>
-            <p class="role">Immobilienberater</p>
-            <p>
-              Mir ist wichtig, dass Sie sich bei einem so wichtigen Thema wie Ihrer Immobilie gut begleitet fühlen.
-              Deshalb lege ich Wert auf Erreichbarkeit, Verlässlichkeit und eine Beratung, die klar, ehrlich und persönlich bleibt.
-            </p>
-          </div>
-        </div>
-
-        <div class="info-box reveal reveal-delay">
-          <h3>Worauf ich Wert lege</h3>
-          <p>
-            Jeder Immobilienverkauf ist anders. Deshalb gibt es bei mir keine Beratung nach Schema F,
-            sondern einen persönlichen Blick auf Ihre Situation, Ihre Ziele und den Weg, der für Sie sinnvoll ist.
-          </p>
-          <p>
-            Ich nehme mir Zeit, höre zu und begleite den gesamten Ablauf so, dass Sie jederzeit wissen,
-            wo Sie stehen und wie es weitergeht.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="section" id="faq">
-    <div class="container faq-container">
-      <div class="section-head reveal">
-        <p class="eyebrow">FAQ</p>
-        <h2>Häufige Fragen</h2>
-      </div>
-
-      <div class="faq-item reveal">
-        <button class="faq-question" type="button" aria-expanded="false">
-          <span>Ist die Immobilienbewertung kostenlos?</span>
-          <span class="faq-icon">⌄</span>
-        </button>
-        <div class="faq-answer">
-          <p>Ja, die erste Einschätzung ist kostenlos und unverbindlich. So können Sie sich in Ruhe einen ersten Überblick verschaffen.</p>
-        </div>
-      </div>
-
-      <div class="faq-item reveal">
-        <button class="faq-question" type="button" aria-expanded="false">
-          <span>Wie lange dauert ein Immobilienverkauf?</span>
-          <span class="faq-icon">⌄</span>
-        </button>
-        <div class="faq-answer">
-          <p>Das hängt unter anderem von Lage, Preis, Zustand und Nachfrage ab. Manche Immobilien verkaufen sich schnell, andere brauchen etwas mehr Zeit und Vorbereitung.</p>
-        </div>
-      </div>
-
-      <div class="faq-item reveal">
-        <button class="faq-question" type="button" aria-expanded="false">
-          <span>Begleiten Sie auch beim Notartermin?</span>
-          <span class="faq-icon">⌄</span>
-        </button>
-        <div class="faq-answer">
-          <p>Ja, ich begleite Sie auf Wunsch bis zum Notartermin und stehe auch bei den letzten Schritten unterstützend an Ihrer Seite.</p>
-        </div>
-      </div>
-
-      <div class="faq-item reveal">
-        <button class="faq-question" type="button" aria-expanded="false">
-          <span>Warum sollte ich mit einem Makler verkaufen?</span>
-          <span class="faq-icon">⌄</span>
-        </button>
-        <div class="faq-answer">
-          <p>Ein Makler nimmt Ihnen viele Schritte ab, bringt Marktkenntnis mit, führt Gespräche mit Interessenten und sorgt dafür, dass der Ablauf professionell und geordnet bleibt.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="section section-soft" id="kontakt">
-    <div class="container">
-      <div class="section-head reveal">
-        <p class="eyebrow">Kontakt</p>
-        <h2>Wir beraten Sie persönlich</h2>
-        <p class="section-text">
-          Schreiben Sie uns einfach oder rufen Sie direkt an.
-          Wir nehmen uns Zeit für Ihr Anliegen und melden uns schnellstmöglich bei Ihnen zurück.
-        </p>
-      </div>
-
-      <div class="contact-layout">
-        <div class="contact-info-card reveal">
-          <h3>Direkter Kontakt</h3>
-          <p>Ob erste Frage oder konkretes Anliegen – wir sind gerne persönlich für Sie da.</p>
-
-          <div class="contact-card-list">
-            <div class="contact-card-item">
-              <div class="contact-card-icon" aria-hidden="true">📞</div>
-              <div class="contact-card-text">
-                <strong>Telefon</strong>
-                <span><a href="tel:+491772929512" class="contact-link">0177 - 2929512</a></span>
-              </div>
-            </div>
-
-            <div class="contact-card-item">
-              <div class="contact-card-icon" aria-hidden="true">✉️</div>
-              <div class="contact-card-text">
-                <strong>E-Mail</strong>
-                <span><a href="mailto:info@deisterblick-immobilien.de" class="contact-link">info@deisterblick-immobilien.de</a></span>
-              </div>
-            </div>
-
-            <div class="contact-card-item">
-              <div class="contact-card-icon" aria-hidden="true">📍</div>
-              <div class="contact-card-text">
-                <strong>Adresse</strong>
-                <span>Siedlung Höhenluft 36, 30890 Barsinghausen</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="form-box reveal reveal-delay">
-          <form class="contact-form" id="contact-form" novalidate>
-            <input
-              type="text"
-              name="website"
-              class="hp-field"
-              tabindex="-1"
-              autocomplete="off"
-              aria-hidden="true"
-            >
-
-            <div class="contact-form-grid">
-              <input type="text" name="name" placeholder="Ihr Name" autocomplete="name" required>
-              <input type="email" name="email" placeholder="Ihre E-Mail" autocomplete="email" required>
-              <input type="tel" name="phone" placeholder="Ihre Telefonnummer" autocomplete="tel">
-              <input type="text" name="subject" placeholder="Betreff">
-              <textarea name="message" rows="7" placeholder="Ihre Nachricht" required></textarea>
-            </div>
-
-            <label class="checkbox-wrap">
-              <input type="checkbox" name="privacy" required>
-              <span>
-                Ich habe die
-                <a href="assets/datenschutzbestimmungen.pdf" target="_blank" rel="noopener noreferrer">
-                  Datenschutzbestimmungen
-                </a>
-                gelesen und bin damit einverstanden, dass meine Angaben zur Bearbeitung meiner Anfrage gespeichert und verarbeitet werden.
-              </span>
-            </label>
-
-            <div class="form-status" id="contact-form-status" aria-live="polite"></div>
-
-            <button type="submit" class="submit-btn">Anfrage senden</button>
-          </form>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <footer class="footer">
-    <div class="container footer-grid">
-      <div>
-        <h3>Deisterblick Immobilien</h3>
-        <p>Ihr Ansprechpartner für persönliche Immobilienberatung am Deister und in der Umgebung.</p>
-      </div>
-
-      <div>
-        <h3>Kontakt</h3>
-        <p><a href="tel:+491772929512" class="footer-link">Telefon: 0177 - 2929512</a></p>
-        <p><a href="mailto:info@deisterblick-immobilien.de" class="footer-link">E-Mail: info@deisterblick-immobilien.de</a></p>
-        <p>Adresse: Siedlung Höhenluft 36, 30890 Barsinghausen</p>
-      </div>
-
-      <div>
-        <h3>Rechtliches</h3>
-        <p><a href="impressum.html">Impressum</a></p>
-        <p><a href="datenschutz.html">Datenschutz</a></p>
-        <p><a href="agb.html">AGB</a></p>
-      </div>
-    </div>
-  </footer>
-
-  <button type="button" class="scroll-top-btn" id="scroll-top-btn" aria-label="Ganz nach oben">
-    <span class="scroll-top-icon">↑</span>
-    <span class="scroll-top-text">Ganz nach oben</span>
-  </button>
-
-  <div class="modal-overlay" id="object-modal" aria-hidden="true">
-    <div class="modal-box object-modal-box" role="dialog" aria-modal="true" aria-labelledby="object-modal-title">
-      <button type="button" class="object-modal-nav object-modal-prev" id="object-modal-prev" aria-label="Vorheriges Objekt">‹</button>
-      <button type="button" class="object-modal-nav object-modal-next" id="object-modal-next" aria-label="Nächstes Objekt">›</button>
-
-      <div class="modal-header">
-        <h3 id="object-modal-title">Objekt</h3>
-        <button type="button" class="modal-close" id="close-object-modal" aria-label="Schließen">✕</button>
-      </div>
-
-      <div class="modal-content" id="object-modal-content"></div>
-    </div>
+<section class="section">
+  <h2>Aktuelle Immobilien</h2>
+  <div id="objekte-container" class="grid">
+    <p>Lade Immobilien...</p>
   </div>
+</section>
 
-  <script src="script.js"></script>
+<section class="section">
+  <h2>Kontakt</h2>
+
+  <form id="contact-form" action="contact.php" method="POST" novalidate>
+
+    <!-- Honeypot -->
+    <input type="text" name="website" style="display:none">
+
+    <input type="text" name="name" placeholder="Ihr Name" required>
+    <input type="email" name="email" placeholder="Ihre E-Mail" required>
+    <textarea name="message" placeholder="Ihre Nachricht" required></textarea>
+
+    <label class="checkbox">
+      <input type="checkbox" name="privacy" required>
+      Ich akzeptiere die Datenschutzerklärung
+    </label>
+
+    <div id="contact-form-status"></div>
+
+    <button type="submit">Jetzt Anfrage senden</button>
+
+  </form>
+</section>
+
+</main>
+
+<script src="script.js"></script>
 </body>
 </html>
