@@ -1,185 +1,45 @@
-
 <?php
-declare(strict_types=1);
+require 'mailer-common.php';
 
-header('Content-Type: application/json; charset=utf-8');
+header('Content-Type: application/json');
+
+session_start();
+
+if(isset($_SESSION['t']) && time() - $_SESSION['t'] < 5){
+  echo json_encode(['success'=>false]);
+  exit;
+}
+$_SESSION['t'] = time();
+
+$name = $_POST['name'] ?? '';
+$email = $_POST['email'] ?? '';
+$msg = $_POST['message'] ?? '';
+$title = $_POST['objekt_titel'] ?? '';
 
 use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
+require 'PHPMailer/src/PHPMailer.php';
 
-require __DIR__ . '/PHPMailer/src/Exception.php';
-require __DIR__ . '/PHPMailer/src/PHPMailer.php';
-require __DIR__ . '/PHPMailer/src/SMTP.php';
+$c = config();
+$mail = new PHPMailer(true);
 
-function respond(int $statusCode, array $data): void
-{
-    http_response_code($statusCode);
-    echo json_encode($data, JSON_UNESCAPED_UNICODE);
-    exit;
-}
+try{
+  $mail->isSMTP();
+  $mail->Host = $c['host'];
+  $mail->SMTPAuth = true;
+  $mail->Username = $c['user'];
+  $mail->Password = $c['pass'];
+  $mail->Port = $c['port'];
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    respond(405, [
-        'success' => false,
-        'message' => 'Ungültige Anfrage.'
-    ]);
-}
+  $mail->setFrom($c['from']);
+  $mail->addAddress($c['from']);
 
-function clean(string $value): string
-{
-    return trim($value);
-}
+  $mail->Subject = "Objektanfrage: $title";
+  $mail->Body = "Name: $name\nEmail: $email\n\n$msg";
 
-$name = clean($_POST['name'] ?? '');
-$email = clean($_POST['email'] ?? '');
-$phone = clean($_POST['phone'] ?? '');
-$subject = clean($_POST['subject'] ?? '');
-$message = clean($_POST['message'] ?? '');
+  $mail->send();
 
-$objektIdIntern = clean($_POST['objekt_id_intern'] ?? '');
-$objektRef = clean($_POST['objekt_ref'] ?? '');
-$objektTitel = clean($_POST['objekt_titel'] ?? '');
-$objektOrt = clean($_POST['objekt_ort'] ?? '');
-$objektPreis = clean($_POST['objekt_preis'] ?? '');
-$objektStatus = clean($_POST['objekt_status'] ?? '');
+  echo json_encode(['success'=>true]);
 
-$privacy = $_POST['privacy'] ?? '';
-$honeypot = clean($_POST['website'] ?? '');
-
-if ($honeypot !== '') {
-    respond(200, [
-        'success' => true,
-        'message' => 'Vielen Dank. Ihre Anfrage wurde empfangen.'
-    ]);
-}
-
-if ($name === '' || $email === '' || $message === '' || $objektTitel === '' || $objektRef === '') {
-    respond(422, [
-        'success' => false,
-        'message' => 'Bitte füllen Sie alle Pflichtfelder aus.'
-    ]);
-}
-
-if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    respond(422, [
-        'success' => false,
-        'message' => 'Bitte geben Sie eine gültige E-Mail-Adresse ein.'
-    ]);
-}
-
-if ($privacy === '') {
-    respond(422, [
-        'success' => false,
-        'message' => 'Bitte bestätigen Sie die Datenschutzhinweise.'
-    ]);
-}
-
-if ($subject === '') {
-    $subject = 'Anfrage zu ' . $objektTitel;
-}
-
-/*
-|--------------------------------------------------------------------------
-| SMTP-EINSTELLUNGEN SPÄTER FÜR IONOS ANPASSEN
-|--------------------------------------------------------------------------
-*/
-$smtpHost = 'smtp.ionos.de';
-$smtpPort = 587;
-$smtpSecure = PHPMailer::ENCRYPTION_STARTTLS;
-$smtpUsername = 'info@deine-domain.de';
-$smtpPassword = 'HIER_IHR_EMAIL_PASSWORT_EINTRAGEN';
-
-$companyName = 'Deisterblick Immobilien';
-$receiverEmail = 'info@deine-domain.de';
-$receiverName = 'Deisterblick Immobilien';
-
-$fromEmail = 'info@deine-domain.de';
-$fromName = 'Deisterblick Immobilien Website';
-
-$customerSubject = 'Ihre Anfrage zum Objekt ' . $objektTitel;
-
-$adminBody = <<<TEXT
-Neue Objektanfrage über die Webseite
-
-Name: {$name}
-E-Mail: {$email}
-Telefon: {$phone}
-Betreff: {$subject}
-
-Objektdaten:
-Titel: {$objektTitel}
-Ort: {$objektOrt}
-Preis: {$objektPreis}
-Status: {$objektStatus}
-Referenz: {$objektRef}
-Interne ID: {$objektIdIntern}
-
-Nachricht:
-{$message}
-TEXT;
-
-$customerBody = <<<TEXT
-Guten Tag {$name},
-
-vielen Dank für Ihre Anfrage zu folgendem Objekt:
-
-Titel: {$objektTitel}
-Ort: {$objektOrt}
-Preis: {$objektPreis}
-Status: {$objektStatus}
-Referenz: {$objektRef}
-
-Wir haben Ihre Anfrage erhalten und melden uns schnellstmöglich bei Ihnen zurück.
-
-Freundliche Grüße
-{$companyName}
-TEXT;
-
-try {
-    $adminMailer = new PHPMailer(true);
-    $adminMailer->isSMTP();
-    $adminMailer->Host = $smtpHost;
-    $adminMailer->SMTPAuth = true;
-    $adminMailer->Username = $smtpUsername;
-    $adminMailer->Password = $smtpPassword;
-    $adminMailer->SMTPSecure = $smtpSecure;
-    $adminMailer->Port = $smtpPort;
-    $adminMailer->CharSet = 'UTF-8';
-
-    $adminMailer->setFrom($fromEmail, $fromName);
-    $adminMailer->addAddress($receiverEmail, $receiverName);
-    $adminMailer->addReplyTo($email, $name);
-
-    $adminMailer->Subject = 'Neue Objektanfrage: ' . $objektTitel . ' | Referenz: ' . $objektRef;
-    $adminMailer->Body = $adminBody;
-    $adminMailer->isHTML(false);
-    $adminMailer->send();
-
-    $customerMailer = new PHPMailer(true);
-    $customerMailer->isSMTP();
-    $customerMailer->Host = $smtpHost;
-    $customerMailer->SMTPAuth = true;
-    $customerMailer->Username = $smtpUsername;
-    $customerMailer->Password = $smtpPassword;
-    $customerMailer->SMTPSecure = $smtpSecure;
-    $customerMailer->Port = $smtpPort;
-    $customerMailer->CharSet = 'UTF-8';
-
-    $customerMailer->setFrom($fromEmail, $companyName);
-    $customerMailer->addAddress($email, $name);
-
-    $customerMailer->Subject = $customerSubject;
-    $customerMailer->Body = $customerBody;
-    $customerMailer->isHTML(false);
-    $customerMailer->send();
-
-    respond(200, [
-        'success' => true,
-        'message' => 'Vielen Dank! Ihre Objektanfrage wurde erfolgreich gesendet.'
-    ]);
-} catch (Exception $e) {
-    respond(500, [
-        'success' => false,
-        'message' => 'Beim Versand der E-Mail ist ein Fehler aufgetreten.'
-    ]);
+}catch(Exception $e){
+  echo json_encode(['success'=>false]);
 }
