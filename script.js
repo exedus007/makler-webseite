@@ -72,13 +72,6 @@ function setFormStatus(element, message, type = "") {
   }
 }
 
-function getReadableFetchErrorMessage() {
-  if (!navigator.onLine) {
-    return "Keine Internetverbindung. Bitte prüfen Sie Ihre Verbindung und versuchen Sie es erneut.";
-  }
-  return "Beim Senden ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.";
-}
-
 document.querySelectorAll(".footer a").forEach((a) => {
   a.target = "_blank";
   a.rel = "noopener noreferrer";
@@ -245,7 +238,11 @@ if (contactForm) {
       }
     } catch (error) {
       console.error("Fehler beim Senden des Kontaktformulars:", error);
-      setFormStatus(contactFormStatus, getReadableFetchErrorMessage(), "error");
+      setFormStatus(
+        contactFormStatus,
+        "Beim Senden ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.",
+        "error"
+      );
     } finally {
       if (submitButton) {
         submitButton.disabled = false;
@@ -258,8 +255,6 @@ if (contactForm) {
 async function ladeObjekte() {
   const container = document.getElementById("objekte-container");
   if (!container) return;
-
-  container.innerHTML = '<p class="objects-empty">Objekte werden geladen...</p>';
 
   try {
     const query = encodeURIComponent(`
@@ -307,7 +302,7 @@ async function ladeObjekte() {
       const bildUrl = objekt?.bild?.asset?._ref ? bildUrlAusRef(objekt.bild.asset._ref) : "assets/makler.jpg";
 
       button.innerHTML = `
-        <img src="${bildUrl}" alt="${titel}" loading="lazy">
+        <img src="${bildUrl}" alt="${titel}">
         <div class="object-text">
           <strong>${titel}</strong>
           <p>${wohnflaeche} ${wohnflaeche && ort ? "·" : ""} ${ort}</p>
@@ -325,7 +320,7 @@ async function ladeObjekte() {
     });
   } catch (error) {
     console.error("Fehler beim Laden der Objekte:", error);
-    container.innerHTML = '<p class="objects-empty">Fehler beim Laden der Objekte. Bitte versuchen Sie es später erneut.</p>';
+    container.innerHTML = '<p class="objects-empty">Fehler beim Laden der Objekte.</p>';
   }
 }
 
@@ -403,7 +398,7 @@ function zeigeObjektModal(index) {
   objectModalContent.innerHTML = `
     <div class="object-modal-layout">
       <div class="object-modal-visual">
-        <img src="${bildUrl}" alt="${titel}" class="object-modal-image" loading="lazy">
+        <img src="${bildUrl}" alt="${titel}" class="object-modal-image">
       </div>
 
       <div class="object-modal-info">
@@ -590,7 +585,11 @@ Vielen Dank.</textarea>
         }
       } catch (error) {
         console.error("Fehler beim Senden der Objektanfrage:", error);
-        setFormStatus(objectFormStatus, getReadableFetchErrorMessage(), "error");
+        setFormStatus(
+          objectFormStatus,
+          "Beim Senden ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.",
+          "error"
+        );
       } finally {
         if (submitButton) {
           submitButton.disabled = false;
@@ -658,32 +657,4 @@ document.addEventListener("keydown", (e) => {
   trapModalFocus(e);
 });
 
-function initRevealElements() {
-  const revealElements = document.querySelectorAll(".reveal");
-  if (!revealElements.length) return;
-
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    revealElements.forEach((element) => element.classList.add("is-visible"));
-    return;
-  }
-
-  const observer = new IntersectionObserver(
-    (entries, currentObserver) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("is-visible");
-          currentObserver.unobserve(entry.target);
-        }
-      });
-    },
-    {
-      threshold: 0.14,
-      rootMargin: "0px 0px -40px 0px"
-    }
-  );
-
-  revealElements.forEach((element) => observer.observe(element));
-}
-
-initRevealElements();
 ladeObjekte();
