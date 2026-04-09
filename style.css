@@ -10,13 +10,6 @@
   --shadow-soft: 0 10px 24px rgba(0, 0, 0, 0.05);
   --shadow-medium: 0 18px 40px rgba(0, 0, 0, 0.07);
   --focus-ring: 0 0 0 3px rgba(157, 214, 190, 0.55);
-  --success-bg: #e7f3ee;
-  --success-border: #cfe4da;
-  --success-text: #0f4b3a;
-  --error-bg: #fff1f1;
-  --error-border: #f0c7c7;
-  --error-text: #8a1f1f;
-  color-scheme: light;
 }
 
 * {
@@ -850,15 +843,15 @@ select:focus-visible {
 }
 
 .form-status.success {
-  background: var(--success-bg);
-  color: var(--success-text);
-  border: 1px solid var(--success-border);
+  background: #e7f3ee;
+  color: #0f4b3a;
+  border: 1px solid #cfe4da;
 }
 
 .form-status.error {
-  background: var(--error-bg);
-  color: var(--error-text);
-  border: 1px solid var(--error-border);
+  background: #fff1f1;
+  color: #8a1f1f;
+  border: 1px solid #f0c7c7;
 }
 
 .submit-btn {
@@ -1184,29 +1177,9 @@ select:focus-visible {
   right: 14px;
 }
 
-.noscript-notice {
-  background: #fff3cd;
-  color: #5c4500;
-  border-top: 1px solid #f0d98a;
-  border-bottom: 1px solid #f0d98a;
-  padding: 14px 16px;
-  text-align: center;
-  font-size: 14px;
-}
-
-.js .reveal {
-  opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.7s ease, transform 0.7s ease;
-}
-
-.js .reveal.reveal-delay {
-  transition-delay: 0.14s;
-}
-
-.js .reveal.is-visible {
+.reveal {
   opacity: 1;
-  transform: translateY(0);
+  transform: none;
 }
 
 @media (max-width: 1180px) {
@@ -1544,185 +1517,5 @@ select:focus-visible {
 
   .object-modal-nav {
     display: none;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
-  *,
-  *::before,
-  *::after {
-    animation: none !important;
-    transition: none !important;
-  }
-
-  .js .reveal,
-  .js .reveal.reveal-delay,
-  .js .reveal.is-visible {
-    opacity: 1 !important;
-    transform: none !important;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #edf3ef;
-    --text-soft: #b7c4bd;
-    --bg: #0d1512;
-    --white: #13211c;
-    --border: #22352d;
-    --shadow-soft: 0 10px 24px rgba(0, 0, 0, 0.28);
-    --shadow-medium: 0 18px 40px rgba(0, 0, 0, 0.32);
-    --success-bg: #123126;
-    --success-border: #28543f;
-    --success-text: #d5f0e4;
-    --error-bg: #341d1d;
-    --error-border: #6a2c2c;
-    --error-text: #ffd9d9;
-    color-scheme: dark;
-  }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-  }
-
-  .navbar {
-    background: rgba(11, 18, 15, 0.96);
-    border-bottom-color: #1d2b25;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
-  }
-
-  .nav-links a {
-    color: #edf3ef;
-  }
-
-  .hero {
-    background:
-      radial-gradient(circle at top left, rgba(255, 255, 255, 0.06), transparent 30%),
-      linear-gradient(135deg, #102119 0%, #162821 48%, #1b2f26 100%);
-  }
-
-  .hero-left h1,
-  .section-head h2,
-  .trust-card h3,
-  .card h3,
-  .profile-content h3,
-  .object-modal-info h4,
-  .faq-question {
-    color: #f3faf6;
-  }
-
-  .hero-text,
-  .section-text,
-  .trust-card p,
-  .card p,
-  .faq-answer p,
-  .contact-card-text span,
-  .object-text p,
-  .object-modal-description,
-  .object-modal-id,
-  .object-form-note {
-    color: #c3d0c9;
-  }
-
-  .hero-tags span,
-  .trust-card,
-  .card,
-  .objects-card,
-  .profile-card,
-  .info-box,
-  .contact-info-card,
-  .form-box,
-  .faq-item,
-  .modal-box,
-  .object-modal-meta-item,
-  .object-inquiry-form,
-  .contact-card-item,
-  .object-item {
-    background: #13211c;
-    border-color: #22352d;
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
-  }
-
-  .object-item:hover {
-    background: #172821;
-  }
-
-  .section-soft,
-  .trust-section {
-    background: #101b17;
-  }
-
-  .topbar,
-  .footer {
-    background: #0d3e31;
-  }
-
-  .contact-form input,
-  .contact-form textarea,
-  .object-form-group input,
-  .object-form-group textarea {
-    background: #0f1a16;
-    color: #edf3ef;
-    border-color: #2a3e36;
-  }
-
-  .contact-form input::placeholder,
-  .contact-form textarea::placeholder,
-  .object-form-group input::placeholder,
-  .object-form-group textarea::placeholder {
-    color: #91a29a;
-  }
-
-  .faq-question {
-    background: #13211c;
-  }
-
-  .faq-answer p {
-    color: #c3d0c9;
-  }
-
-  .object-action-btn.outline {
-    background: transparent;
-  }
-
-  .object-action-btn.secondary {
-    background: #173128;
-    border-color: #285443;
-    color: #d7efe6;
-  }
-
-  .object-action-btn.secondary:hover {
-    background: #1a3a2e;
-  }
-
-  .scroll-top-btn,
-  .submit-btn,
-  .btn-green,
-  .btn-secondary-green,
-  .object-action-btn.primary,
-  .modal-close,
-  .object-modal-nav {
-    box-shadow: none;
-  }
-
-  .noscript-notice {
-    background: #463400;
-    border-color: #7b5a00;
-    color: #ffe8a3;
-  }
-
-  .nav-links {
-    background: #13211c;
-    border-color: #22352d;
-  }
-
-  .nav-links a:hover,
-  .nav-links a:focus-visible {
-    background: #1a2f27;
   }
 }
