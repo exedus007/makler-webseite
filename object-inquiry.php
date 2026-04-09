@@ -1,45 +1,141 @@
 <?php
-require 'mailer-common.php';
+declare(strict_types=1);
 
-header('Content-Type: application/json');
+header('Content-Type: application/json; charset=utf-8');
 
-session_start();
-
-if(isset($_SESSION['t']) && time() - $_SESSION['t'] < 5){
-  echo json_encode(['success'=>false]);
-  exit;
-}
-$_SESSION['t'] = time();
-
-$name = $_POST['name'] ?? '';
-$email = $_POST['email'] ?? '';
-$msg = $_POST['message'] ?? '';
-$title = $_POST['objekt_titel'] ?? '';
-
+use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
-require 'PHPMailer/src/PHPMailer.php';
 
-$c = config();
-$mail = new PHPMailer(true);
+require __DIR__ . '/PHPMailer/src/Exception.php';
+require __DIR__ . '/PHPMailer/src/PHPMailer.php';
+require __DIR__ . '/PHPMailer/src/SMTP.php';
+require __DIR__ . '/mailer-common.php';
 
-try{
-  $mail->isSMTP();
-  $mail->Host = $c['host'];
-  $mail->SMTPAuth = true;
-  $mail->Username = $c['user'];
-  $mail->Password = $c['pass'];
-  $mail->Port = $c['port'];
+ensurePostRequest();
+validateSameOriginRequest();
+enforceRateLimit('object-inquiry-form', 5, 300);
 
-  $mail->setFrom($c['from']);
-  $mail->addAddress($c['from']);
+$name = clean($_POST['name'] ?? '');
+$email = clean($_POST['email'] ?? '');
+$phone = clean($_POST['phone'] ?? '');
+$subject = clean($_POST['subject'] ?? '');
+$message = clean($_POST['message'] ?? '');
 
-  $mail->Subject = "Objektanfrage: $title";
-  $mail->Body = "Name: $name\nEmail: $email\n\n$msg";
+$objektIdIntern = clean($_POST['objekt_id_intern'] ?? '');
+$objektRef = clean($_POST['objekt_ref'] ?? '');
+$objektTitel = clean($_POST['objekt_titel'] ?? '');
+$objektOrt = clean($_POST['objekt_ort'] ?? '');
+$objektPreis = clean($_POST['objekt_preis'] ?? '');
+$objektStatus = clean($_POST['objekt_status'] ?? '');
 
-  $mail->send();
+$privacy = $_POST['privacy'] ?? '';
+$honeypot = clean($_POST['website'] ?? '');
 
-  echo json_encode(['success'=>true]);
+if ($honeypot !== '') {
+    respond(200, [
+        'success' => true,
+        'message' => 'Vielen Dank. Ihre Anfrage wurde empfangen.'
+    ]);
+}
 
-}catch(Exception $e){
-  echo json_encode(['success'=>false]);
+if ($name === '' || $email === '' || $message === '' || $objektTitel === '' || $objektRef === '') {
+    respond(422, [
+        'success' => false,
+        'message' => 'Bitte füllen Sie alle Pflichtfelder aus.'
+    ]);
+}
+
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    respond(422, [
+        'success' => false,
+        'message' => 'Bitte geben Sie eine gültige E-Mail-Adresse ein.'
+    ]);
+}
+
+if ($privacy === '') {
+    respond(422, [
+        'success' => false,
+        'message' => 'Bitte bestätigen Sie die Datenschutzhinweise.'
+    ]);
+}
+
+if ($subject === '') {
+    $subject = 'Anfrage zu ' . $objektTitel;
+}
+
+$settings = getMailSettings();
+
+$adminBody = <<<TEXT
+Neue Objektanfrage über die Webseite
+
+Name: {$name}
+E-Mail: {$email}
+Telefon: {$phone}
+Betreff: {$subject}
+
+Objektdaten:
+Titel: {$objektTitel}
+Ort: {$objektOrt}
+Preis: {$objektPreis}
+Status: {$objektStatus}
+Referenz: {$objektRef}
+Interne ID: {$objektIdIntern}
+
+Nachricht:
+{$message}
+TEXT;
+
+$customerSubject = 'Ihre Anfrage zum Objekt ' . $objektTitel;
+
+$customerBody = <<<TEXT
+Guten Tag {$name},
+
+vielen Dank für Ihre Anfrage zu folgendem Objekt:
+
+Titel: {$objektTitel}
+Ort: {$objektOrt}
+Preis: {$objektPreis}
+Status: {$objektStatus}
+Referenz: {$objektRef}
+
+Wir haben Ihre Anfrage erhalten und melden uns schnellstmöglich bei Ihnen zurück.
+
+Freundliche Grüße
+{$settings['companyName']}
+TEXT;
+
+try {
+    $adminMailer = createConfiguredMailer();
+    $adminMailer->setFrom($settings['fromEmail'], $settings['fromName']);
+    $adminMailer->addAddress($settings['receiverEmail'], $settings['receiverName']);
+    $adminMailer->addReplyTo($email, $name);
+    $adminMailer->Subject = 'Neue Objektanfrage: ' . $objektTitel . ' | Referenz: ' . $objektRef;
+    $adminMailer->Body = $adminBody;
+    $adminMailer->isHTML(false);
+    $adminMailer->send();
+
+    $customerMailer = createConfiguredMailer();
+    $customerMailer->setFrom($settings['fromEmail'], $settings['companyName']);
+    $customerMailer->addAddress($email, $name);
+    $customerMailer->Subject = $customerSubject;
+    $customerMailer->Body = $customerBody;
+    $customerMailer->isHTML(false);
+    $customerMailer->send();
+
+    respond(200, [
+        'success' => true,
+        'message' => 'Vielen Dank! Ihre Objektanfrage wurde erfolgreich gesendet.'
+    ]);
+} catch (Exception $e) {
+    appLog('Fehler beim Versand der Objektanfrage.', [
+        'message' => $e->getMessage(),
+        'email' => $email,
+        'objektRef' => $objektRef,
+        'objektTitel' => $objektTitel
+    ]);
+
+    respond(500, [
+        'success' => false,
+        'message' => 'Beim Versand der E-Mail ist ein Fehler aufgetreten.'
+    ]);
 }
