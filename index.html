@@ -1,123 +1,141 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Deisterblick Immobilien</title>
+<?php
+declare(strict_types=1);
 
-  <meta name="description" content="Immobilienberatung am Deister – Verkauf, Bewertung und Service">
+header('Content-Type: application/json; charset=utf-8');
 
-  <!-- SEO -->
-  <meta property="og:title" content="Deisterblick Immobilien">
-  <meta property="og:description" content="Ihr Immobilienpartner am Deister">
-  <meta property="og:image" content="assets/logo.jpg">
+use PHPMailer\PHPMailer\Exception;
+use PHPMailer\PHPMailer\PHPMailer;
 
-  <link rel="stylesheet" href="style.css">
-</head>
+require __DIR__ . '/PHPMailer/src/Exception.php';
+require __DIR__ . '/PHPMailer/src/PHPMailer.php';
+require __DIR__ . '/PHPMailer/src/SMTP.php';
+require __DIR__ . '/mailer-common.php';
 
-<body>
+ensurePostRequest();
+validateSameOriginRequest();
+enforceRateLimit('object-inquiry-form', 5, 300);
 
-<header class="header">
-  <div class="container">
-    <h1>Deisterblick Immobilien</h1>
-  </div>
-</header>
+$name = clean($_POST['name'] ?? '');
+$email = clean($_POST['email'] ?? '');
+$phone = clean($_POST['phone'] ?? '');
+$subject = clean($_POST['subject'] ?? '');
+$message = clean($_POST['message'] ?? '');
 
-<main>
+$objektIdIntern = clean($_POST['objekt_id_intern'] ?? '');
+$objektRef = clean($_POST['objekt_ref'] ?? '');
+$objektTitel = clean($_POST['objekt_titel'] ?? '');
+$objektOrt = clean($_POST['objekt_ort'] ?? '');
+$objektPreis = clean($_POST['objekt_preis'] ?? '');
+$objektStatus = clean($_POST['objekt_status'] ?? '');
 
-<!-- HERO -->
-<section class="hero">
-  <div class="container">
-    <h2>Ihr Immobilienpartner am Deister</h2>
-    <p>Verkauf, Bewertung und persönliche Beratung</p>
-    <a href="#kontakt" class="btn">Jetzt Beratung anfragen</a>
-  </div>
-</section>
+$privacy = $_POST['privacy'] ?? '';
+$honeypot = clean($_POST['website'] ?? '');
 
-<!-- VORTEILE -->
-<section class="section">
-  <div class="container">
-    <h2>Ihre Vorteile</h2>
-    <div class="grid">
-      <div class="card">Persönliche Betreuung</div>
-      <div class="card">Regionale Marktkenntnis</div>
-      <div class="card">Professionelle Vermarktung</div>
-      <div class="card">Begleitung bis zum Abschluss</div>
-    </div>
-  </div>
-</section>
+if ($honeypot !== '') {
+    respond(200, [
+        'success' => true,
+        'message' => 'Vielen Dank. Ihre Anfrage wurde empfangen.'
+    ]);
+}
 
-<!-- OBJEKTE -->
-<section class="section">
-  <div class="container">
-    <h2>Aktuelle Immobilien</h2>
-    <div id="objekte-container" class="grid">
-      <p>Lade Immobilien...</p>
-    </div>
-  </div>
-</section>
+if ($name === '' || $email === '' || $message === '' || $objektTitel === '' || $objektRef === '') {
+    respond(422, [
+        'success' => false,
+        'message' => 'Bitte füllen Sie alle Pflichtfelder aus.'
+    ]);
+}
 
-<!-- ÜBER MICH -->
-<section class="section">
-  <div class="container">
-    <h2>Über mich</h2>
-    <p>Ich begleite Sie persönlich beim Verkauf oder Kauf Ihrer Immobilie.</p>
-  </div>
-</section>
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    respond(422, [
+        'success' => false,
+        'message' => 'Bitte geben Sie eine gültige E-Mail-Adresse ein.'
+    ]);
+}
 
-<!-- FAQ -->
-<section class="section">
-  <div class="container">
-    <h2>FAQ</h2>
+if ($privacy === '') {
+    respond(422, [
+        'success' => false,
+        'message' => 'Bitte bestätigen Sie die Datenschutzhinweise.'
+    ]);
+}
 
-    <div class="faq-item">
-      <button class="faq-question">Ist die Bewertung kostenlos?</button>
-      <div class="faq-answer">Ja, die erste Bewertung ist kostenlos.</div>
-    </div>
+if ($subject === '') {
+    $subject = 'Anfrage zu ' . $objektTitel;
+}
 
-    <div class="faq-item">
-      <button class="faq-question">Wie lange dauert ein Verkauf?</button>
-      <div class="faq-answer">Je nach Lage unterschiedlich.</div>
-    </div>
+$settings = getMailSettings();
 
-  </div>
-</section>
+$adminBody = <<<TEXT
+Neue Objektanfrage über die Webseite
 
-<!-- KONTAKT -->
-<section class="section" id="kontakt">
-  <div class="container">
-    <h2>Kontakt</h2>
+Name: {$name}
+E-Mail: {$email}
+Telefon: {$phone}
+Betreff: {$subject}
 
-    <form id="contact-form" action="contact.php" method="POST">
+Objektdaten:
+Titel: {$objektTitel}
+Ort: {$objektOrt}
+Preis: {$objektPreis}
+Status: {$objektStatus}
+Referenz: {$objektRef}
+Interne ID: {$objektIdIntern}
 
-      <!-- Honeypot -->
-      <input type="text" name="website" class="hp-field">
+Nachricht:
+{$message}
+TEXT;
 
-      <input type="text" name="name" placeholder="Ihr Name" required>
-      <input type="email" name="email" placeholder="Ihre E-Mail" required>
-      <textarea name="message" placeholder="Ihre Nachricht" required></textarea>
+$customerSubject = 'Ihre Anfrage zum Objekt ' . $objektTitel;
 
-      <label>
-        <input type="checkbox" name="privacy" required>
-        Datenschutz akzeptieren
-      </label>
+$customerBody = <<<TEXT
+Guten Tag {$name},
 
-      <div id="contact-form-status"></div>
+vielen Dank für Ihre Anfrage zu folgendem Objekt:
 
-      <button type="submit">Jetzt Anfrage senden</button>
-    </form>
+Titel: {$objektTitel}
+Ort: {$objektOrt}
+Preis: {$objektPreis}
+Status: {$objektStatus}
+Referenz: {$objektRef}
 
-  </div>
-</section>
+Wir haben Ihre Anfrage erhalten und melden uns schnellstmöglich bei Ihnen zurück.
 
-</main>
+Freundliche Grüße
+{$settings['companyName']}
+TEXT;
 
-<footer class="footer">
-  <div class="container">
-    <p>© Deisterblick Immobilien</p>
-  </div>
-</footer>
+try {
+    $adminMailer = createConfiguredMailer();
+    $adminMailer->setFrom($settings['fromEmail'], $settings['fromName']);
+    $adminMailer->addAddress($settings['receiverEmail'], $settings['receiverName']);
+    $adminMailer->addReplyTo($email, $name);
+    $adminMailer->Subject = 'Neue Objektanfrage: ' . $objektTitel . ' | Referenz: ' . $objektRef;
+    $adminMailer->Body = $adminBody;
+    $adminMailer->isHTML(false);
+    $adminMailer->send();
 
-<script src="script.js"></script>
-</body>
-</html>
+    $customerMailer = createConfiguredMailer();
+    $customerMailer->setFrom($settings['fromEmail'], $settings['companyName']);
+    $customerMailer->addAddress($email, $name);
+    $customerMailer->Subject = $customerSubject;
+    $customerMailer->Body = $customerBody;
+    $customerMailer->isHTML(false);
+    $customerMailer->send();
+
+    respond(200, [
+        'success' => true,
+        'message' => 'Vielen Dank! Ihre Objektanfrage wurde erfolgreich gesendet.'
+    ]);
+} catch (Exception $e) {
+    appLog('Fehler beim Versand der Objektanfrage.', [
+        'message' => $e->getMessage(),
+        'email' => $email,
+        'objektRef' => $objektRef,
+        'objektTitel' => $objektTitel
+    ]);
+
+    respond(500, [
+        'success' => false,
+        'message' => 'Beim Versand der E-Mail ist ein Fehler aufgetreten.'
+    ]);
+}
