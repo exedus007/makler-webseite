@@ -1,65 +1,124 @@
 <?php
-require 'mailer-common.php';
+declare(strict_types=1);
 
-header('Content-Type: application/json');
+header('Content-Type: application/json; charset=utf-8');
 
-session_start();
-
-/* Rate Limit */
-if(isset($_SESSION['t']) && time() - $_SESSION['t'] < 5){
-  echo json_encode(['success'=>false,'message'=>'Bitte kurz warten']);
-  exit;
-}
-$_SESSION['t'] = time();
-
-/* Honeypot */
-if(!empty($_POST['website'])){
-  echo json_encode(['success'=>true]);
-  exit;
-}
-
-/* Daten */
-$name = trim($_POST['name'] ?? '');
-$email = trim($_POST['email'] ?? '');
-$msg = trim($_POST['message'] ?? '');
-$privacy = $_POST['privacy'] ?? '';
-
-if(!$name || !$email || !$msg || !$privacy){
-  echo json_encode(['success'=>false,'message'=>'Pflichtfelder fehlen']);
-  exit;
-}
-
-if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
-  echo json_encode(['success'=>false,'message'=>'Ungültige E-Mail']);
-  exit;
-}
-
-/* Mail */
+use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
-require 'PHPMailer/src/PHPMailer.php';
 
-$c = config();
-$mail = new PHPMailer(true);
+require __DIR__ . '/PHPMailer/src/Exception.php';
+require __DIR__ . '/PHPMailer/src/PHPMailer.php';
+require __DIR__ . '/PHPMailer/src/SMTP.php';
+require __DIR__ . '/mailer-common.php';
 
-try{
-  $mail->isSMTP();
-  $mail->Host = $c['host'];
-  $mail->SMTPAuth = true;
-  $mail->Username = $c['user'];
-  $mail->Password = $c['pass'];
-  $mail->Port = $c['port'];
+ensurePostRequest();
+validateSameOriginRequest();
+enforceRateLimit('contact-form', 5, 300);
 
-  $mail->setFrom($c['from']);
-  $mail->addAddress($c['from']);
+$name = clean($_POST['name'] ?? '');
+$email = clean($_POST['email'] ?? '');
+$phone = clean($_POST['phone'] ?? '');
+$subject = clean($_POST['subject'] ?? '');
+$message = clean($_POST['message'] ?? '');
+$privacy = $_POST['privacy'] ?? '';
+$honeypot = clean($_POST['website'] ?? '');
 
-  $mail->Subject = "Neue Anfrage";
-  $mail->Body = "Name: $name\nEmail: $email\n\n$msg";
+if ($honeypot !== '') {
+    respond(200, [
+        'success' => true,
+        'message' => 'Vielen Dank. Ihre Anfrage wurde empfangen.'
+    ]);
+}
 
-  $mail->send();
+if ($name === '' || $email === '' || $message === '') {
+    respond(422, [
+        'success' => false,
+        'message' => 'Bitte füllen Sie alle Pflichtfelder aus.'
+    ]);
+}
 
-  echo json_encode(['success'=>true]);
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    respond(422, [
+        'success' => false,
+        'message' => 'Bitte geben Sie eine gültige E-Mail-Adresse ein.'
+    ]);
+}
 
-}catch(Exception $e){
-  error_log($e->getMessage());
-  echo json_encode(['success'=>false]);
+if ($privacy === '') {
+    respond(422, [
+        'success' => false,
+        'message' => 'Bitte bestätigen Sie die Datenschutzhinweise.'
+    ]);
+}
+
+if ($subject === '') {
+    $subject = 'Allgemeine Kontaktanfrage';
+}
+
+$settings = getMailSettings();
+
+$adminBody = <<<TEXT
+Neue Kontaktanfrage über die Webseite
+
+Name: {$name}
+E-Mail: {$email}
+Telefon: {$phone}
+Betreff: {$subject}
+
+Nachricht:
+{$message}
+TEXT;
+
+$customerSubject = 'Ihre Anfrage bei ' . $settings['companyName'];
+
+$customerBody = <<<TEXT
+Guten Tag {$name},
+
+vielen Dank für Ihre Nachricht.
+
+Wir haben Ihre Anfrage erhalten und melden uns schnellstmöglich bei Ihnen zurück.
+
+Ihre Angaben:
+Name: {$name}
+E-Mail: {$email}
+Telefon: {$phone}
+Betreff: {$subject}
+
+Freundliche Grüße
+{$settings['companyName']}
+TEXT;
+
+try {
+    $adminMailer = createConfiguredMailer();
+    $adminMailer->setFrom($settings['fromEmail'], $settings['fromName']);
+    $adminMailer->addAddress($settings['receiverEmail'], $settings['receiverName']);
+    $adminMailer->addReplyTo($email, $name);
+    $adminMailer->Subject = 'Neue Kontaktanfrage: ' . $subject;
+    $adminMailer->Body = $adminBody;
+    $adminMailer->isHTML(false);
+    $adminMailer->send();
+
+    $customerMailer = createConfiguredMailer();
+    $customerMailer->setFrom($settings['fromEmail'], $settings['companyName']);
+    $customerMailer->addAddress($email, $name);
+    $customerMailer->Subject = $customerSubject;
+    $customerMailer->Body = $customerBody;
+    $customerMailer->isHTML(false);
+    $customerMailer->send();
+
+    respond(200, [
+        'success' => true,
+        'message' => 'Vielen Dank! Ihre Anfrage wurde erfolgreich gesendet.'
+    ]);
+} catch (Exception $e) {
+    appLog('Fehler beim Versand der Kontaktanfrage.', [
+        'message' => $e->getMessage(),
+        'email' => $email,
+        'subject' => $subject
+    ]);
+
+    respond(500, [
+        'success' => false,
+        'message' => 'Beim Versand der E-Mail ist ein Fehler aufgetreten.'
+    ]);
 }
