@@ -3,14 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>Deisterblick Immobilien</title>
-  <meta name="description" content="Deisterblick Immobilien – Verkauf, Bewertung und Immobilienservice am Deister">
+
+  <meta name="description" content="Immobilienberatung am Deister – Verkauf, Bewertung und Service">
 
   <!-- SEO -->
   <meta property="og:title" content="Deisterblick Immobilien">
   <meta property="og:description" content="Ihr Immobilienpartner am Deister">
-  <meta property="og:type" content="website">
   <meta property="og:image" content="assets/logo.jpg">
 
   <link rel="stylesheet" href="style.css">
@@ -19,43 +18,105 @@
 <body>
 
 <header class="header">
-  <h1>Deisterblick Immobilien</h1>
+  <div class="container">
+    <h1>Deisterblick Immobilien</h1>
+  </div>
 </header>
 
 <main>
 
-<section class="section">
-  <h2>Aktuelle Immobilien</h2>
-  <div id="objekte-container" class="grid">
-    <p>Lade Immobilien...</p>
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <h2>Ihr Immobilienpartner am Deister</h2>
+    <p>Verkauf, Bewertung und persönliche Beratung</p>
+    <a href="#kontakt" class="btn">Jetzt Beratung anfragen</a>
   </div>
 </section>
 
+<!-- VORTEILE -->
 <section class="section">
-  <h2>Kontakt</h2>
+  <div class="container">
+    <h2>Ihre Vorteile</h2>
+    <div class="grid">
+      <div class="card">Persönliche Betreuung</div>
+      <div class="card">Regionale Marktkenntnis</div>
+      <div class="card">Professionelle Vermarktung</div>
+      <div class="card">Begleitung bis zum Abschluss</div>
+    </div>
+  </div>
+</section>
 
-  <form id="contact-form" action="contact.php" method="POST" novalidate>
+<!-- OBJEKTE -->
+<section class="section">
+  <div class="container">
+    <h2>Aktuelle Immobilien</h2>
+    <div id="objekte-container" class="grid">
+      <p>Lade Immobilien...</p>
+    </div>
+  </div>
+</section>
 
-    <!-- Honeypot -->
-    <input type="text" name="website" style="display:none">
+<!-- ÜBER MICH -->
+<section class="section">
+  <div class="container">
+    <h2>Über mich</h2>
+    <p>Ich begleite Sie persönlich beim Verkauf oder Kauf Ihrer Immobilie.</p>
+  </div>
+</section>
 
-    <input type="text" name="name" placeholder="Ihr Name" required>
-    <input type="email" name="email" placeholder="Ihre E-Mail" required>
-    <textarea name="message" placeholder="Ihre Nachricht" required></textarea>
+<!-- FAQ -->
+<section class="section">
+  <div class="container">
+    <h2>FAQ</h2>
 
-    <label class="checkbox">
-      <input type="checkbox" name="privacy" required>
-      Ich akzeptiere die Datenschutzerklärung
-    </label>
+    <div class="faq-item">
+      <button class="faq-question">Ist die Bewertung kostenlos?</button>
+      <div class="faq-answer">Ja, die erste Bewertung ist kostenlos.</div>
+    </div>
 
-    <div id="contact-form-status"></div>
+    <div class="faq-item">
+      <button class="faq-question">Wie lange dauert ein Verkauf?</button>
+      <div class="faq-answer">Je nach Lage unterschiedlich.</div>
+    </div>
 
-    <button type="submit">Jetzt Anfrage senden</button>
+  </div>
+</section>
 
-  </form>
+<!-- KONTAKT -->
+<section class="section" id="kontakt">
+  <div class="container">
+    <h2>Kontakt</h2>
+
+    <form id="contact-form" action="contact.php" method="POST">
+
+      <!-- Honeypot -->
+      <input type="text" name="website" class="hp-field">
+
+      <input type="text" name="name" placeholder="Ihr Name" required>
+      <input type="email" name="email" placeholder="Ihre E-Mail" required>
+      <textarea name="message" placeholder="Ihre Nachricht" required></textarea>
+
+      <label>
+        <input type="checkbox" name="privacy" required>
+        Datenschutz akzeptieren
+      </label>
+
+      <div id="contact-form-status"></div>
+
+      <button type="submit">Jetzt Anfrage senden</button>
+    </form>
+
+  </div>
 </section>
 
 </main>
+
+<footer class="footer">
+  <div class="container">
+    <p>© Deisterblick Immobilien</p>
+  </div>
+</footer>
 
 <script src="script.js"></script>
 </body>
